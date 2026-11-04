@@ -1,7 +1,9 @@
 import { createServer, type Server } from 'node:http'
 import { createYoga } from 'graphql-yoga'
+import type { PrismaClient } from '@prisma/client'
+import { extractBearerToken, verifyAccessToken } from './auth/jwt.js'
 import type { Env } from './env.js'
-import { prisma } from './lib/prisma.js'
+import { prisma as defaultPrisma } from './lib/prisma.js'
 import { schema, type GraphQLContext } from './graphql/schema.js'
 
 export type CreateAppServerResult = {
@@ -10,7 +12,43 @@ export type CreateAppServerResult = {
   endpoint: string
 }
 
-export function createAppServer(env: Env): CreateAppServerResult {
+export type CreateAppServerOptions = {
+  prisma?: PrismaClient
+}
+
+async function resolveUserId(
+  request: Request,
+  env: Env,
+  prisma: PrismaClient,
+): Promise<string | null> {
+  const authorization = request.headers.get('authorization')
+  if (!authorization) {
+    return null
+  }
+
+  const token = extractBearerToken(authorization)
+  if (!token) {
+    return null
+  }
+
+  try {
+    const payload = await verifyAccessToken(token, env.JWT_SECRET)
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: { id: true },
+    })
+    return user?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+export function createAppServer(
+  env: Env,
+  options: CreateAppServerOptions = {},
+): CreateAppServerResult {
+  const prisma = options.prisma ?? defaultPrisma
+
   const yoga = createYoga<GraphQLContext>({
     schema,
     graphqlEndpoint: '/graphql',
@@ -20,10 +58,13 @@ export function createAppServer(env: Env): CreateAppServerResult {
       methods: ['GET', 'POST', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
     },
-    context: (): GraphQLContext => ({
+    context: async ({ request }): Promise<GraphQLContext> => ({
       prisma,
+      env,
+      userId: await resolveUserId(request, env, prisma),
     }),
     landingPage: env.NODE_ENV !== 'production',
+    maskedErrors: env.NODE_ENV === 'production',
   })
 
   const server = createServer(yoga)
