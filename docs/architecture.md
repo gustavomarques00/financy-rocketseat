@@ -1,6 +1,6 @@
 # Arquitetura — Financy
 
-Decisões técnicas da fundação (Etapa 1). O objetivo é uma aplicação simples, consistente e fácil de avaliar — sem abstrações desnecessárias.
+Decisões técnicas das Etapas 1 e 2. Objetivo: aplicação simples, consistente e fácil de avaliar.
 
 ## Organização frontend / backend
 
@@ -8,116 +8,188 @@ Decisões técnicas da fundação (Etapa 1). O objetivo é uma aplicação simpl
 financy-rocketseat/
 ├── backend/          # API GraphQL (Node.js + TypeScript)
 │   ├── prisma/       # Schema e migrações
-│   └── src/          # Servidor, schema GraphQL, env, Prisma client
-├── frontend/         # SPA React + Vite + TypeScript
-│   └── src/          # UI, cliente GraphQL, tema
-└── docs/             # Requisitos, arquitetura, plano
+│   └── src/          # Servidor, auth, serviços, schema GraphQL
+├── frontend/         # SPA React + Vite + TypeScript (Etapa 3 pendente)
+│   └── src/
+└── docs/
 ```
 
-- Repositório monorepo simples (dois pacotes npm independentes).
-- Sem workspace tooling adicional nesta etapa.
-- Sem compartilhamento de código tipado entre apps (pode ser revisado depois se necessário).
+- Monorepo com dois pacotes npm independentes.
+- Sem compartilhamento de código tipado entre apps nesta fase.
 
 ## Comunicação GraphQL
 
-- Backend expõe um único endpoint HTTP GraphQL (`/graphql`) via **GraphQL Yoga** sobre `node:http`.
-- Frontend consome o endpoint com **graphql-request** (cliente mínimo, sem cache complexo nesta etapa).
-- Query de diagnóstico inicial: `health` — verifica disponibilidade da API e conectividade Prisma/SQLite.
-- Mutations e queries de domínio (auth, categorias, transações) entram na Etapa 2/3.
-
-**Por que GraphQL Yoga:** setup enxuto, CORS nativo, alinhado a Node HTTP padrão, sem acoplamento a framework web completo.
+- Endpoint único: `POST /graphql` (GraphQL Yoga + `node:http`).
+- Cliente previsto no frontend: `graphql-request`.
+- Query pública de diagnóstico: `health`.
+- Operações públicas: `health`, `register`, `login`.
+- Operações privadas: `me`, CRUD de `categories` / `transactions`.
 
 ## Responsabilidades do servidor
 
-1. Carregar e validar variáveis de ambiente.
+1. Validar variáveis de ambiente no boot.
 2. Servir o schema GraphQL.
-3. Aplicar política de CORS restrita.
-4. Encapsular acesso ao banco via Prisma Client.
-5. Propagar erros de forma previsível (GraphQL errors + falha controlada na inicialização).
-6. (Futuro) Autenticar JWT e autorizar por proprietário dos recursos.
+3. Aplicar CORS restrito.
+4. Autenticar JWT no context factory.
+5. Autorizar por ownership (`userId` do token).
+6. Persistência via Prisma Client.
+7. Mapear erros de domínio para GraphQL errors tipados.
 
 ## Persistência — Prisma / SQLite
 
-- Provider: `sqlite`
-- URL via `DATABASE_URL` (exemplo: `file:./dev.db`)
-- Schema inicial:
-
 | Model | Papel |
 |-------|--------|
-| `User` | Conta; base do isolamento |
-| `Category` | Categorias por usuário |
-| `Transaction` | Transações por usuário, ligadas a categoria |
+| `User` | Conta; e-mail único; `passwordHash` |
+| `Category` | Categorias por usuário (`userId`, nome único por usuário) |
+| `Transaction` | Transações por usuário; `amount` em centavos (`Int`); tipo `INCOME` \| `EXPENSE` |
 
-- Relacionamentos com `onDelete: Cascade` onde o proprietário é removido.
-- Valores monetários em centavos (`Int`) para evitar imprecisão de ponto flutuante.
-- Tipo de transação: enum `INCOME` | `EXPENSE`.
+- Remoção de usuário cascateia categorias e transações.
+- Remoção de categoria com transações vinculadas é **bloqueada** (`onDelete: Restrict` + regra de domínio `CATEGORY_IN_USE`).
+- SQLite local; PostgreSQL permanece opção futura do enunciado.
 
-SQLite simplifica execução local. Migração para PostgreSQL permanece compatível com o enunciado se necessário na entrega.
+### Política monetária
 
-## Estratégia prevista de autenticação
+| Aspecto | Decisão |
+|---------|---------|
+| Unidade armazenada | Centavos inteiros (`Int`) |
+| Tipo GraphQL | `Int!` |
+| Sinal | Sempre positivo; direção via `type` |
+| Zero / negativo | Rejeitados (`BAD_USER_INPUT`) |
+| Limite máximo | `99_999_999_999` centavos |
+| Arredondamento | Não aplicável (inteiro) |
+| Moeda múltipla | Fora de escopo |
+
+## Autenticação
 
 | Item | Decisão |
 |------|---------|
-| Mecanismo | JWT (Bearer) |
-| Secret | `JWT_SECRET` apenas via ambiente |
-| Hash de senha | Algoritmo dedicado (ex.: bcrypt) na Etapa 2 — não improvisar agora |
-| Contexto GraphQL | `userId` resolvido a partir do token no context factory |
-| Expiração / refresh | Definidos na Etapa 2 com critérios explícitos |
+| Cadastro / login | Mutations GraphQL `register` / `login` |
+| Hash de senha | `bcryptjs` (12 rounds) |
+| Token | JWT HS256 via `jose` |
+| Transporte | `Authorization: Bearer <token>` |
+| Secret | `JWT_SECRET` (mín. 16 chars, só ambiente) |
+| Expiração | `JWT_EXPIRES_IN` (padrão `7d`) |
+| Issuer / audience | `financy-backend` / `financy-frontend` |
+| Algoritmo aceito | apenas `HS256` |
 
-Nesta fundação o schema já prevê `passwordHash`; fluxos de cadastro/login **não** estão implementados.
+Fluxo do contexto:
 
-## Isolamento de dados por usuário
+1. Extrair Bearer token.
+2. Verificar assinatura, algoritmo, issuer, audience e expiração.
+3. Confirmar que o usuário ainda existe.
+4. Expor `userId` aos resolvers; **nunca** aceitar `userId` do cliente.
 
-- Toda Category e Transaction possui `userId`.
-- Operações de leitura/escrita filtrarão e validarão ownership no servidor.
-- Frontend nunca é fonte de confiança para autorização.
-- Ausência de contexto autenticado ≠ permissão global.
+Fail-closed: token ausente, inválido ou expirado → `UNAUTHENTICATED` nas rotas privadas.
+
+## Isolamento / ownership
+
+- Toda leitura/escrita de Category e Transaction filtra por `{ id, userId }`.
+- Categoria de outro usuário é tratada como `NOT_FOUND` (sem vazamento).
+- Associação de transação a categoria alheia é bloqueada.
+- Listagens nunca cruzam dados entre usuários.
+
+## Contratos GraphQL (Etapa 2)
+
+### Públicas
+
+```graphql
+mutation Register($input: RegisterInput!) {
+  register(input: $input) { token user { id name email } }
+}
+
+mutation Login($input: LoginInput!) {
+  login(input: $input) { token user { id name email } }
+}
+
+query Health { health { status service timestamp database } }
+```
+
+### Privadas (Bearer)
+
+```graphql
+query Me { me { id name email createdAt updatedAt } }
+
+query Categories { categories { id name createdAt updatedAt } }
+mutation CreateCategory($input: CreateCategoryInput!) {
+  createCategory(input: $input) { id name }
+}
+mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {
+  updateCategory(id: $id, input: $input) { id name }
+}
+mutation DeleteCategory($id: ID!) { deleteCategory(id: $id) { id name } }
+
+query Transactions {
+  transactions {
+    id description amount type date categoryId
+    category { id name }
+  }
+}
+mutation CreateTransaction($input: CreateTransactionInput!) {
+  createTransaction(input: $input) {
+    id description amount type date categoryId category { id name }
+  }
+}
+mutation UpdateTransaction($id: ID!, $input: UpdateTransactionInput!) {
+  updateTransaction(id: $id, input: $input) { id description amount }
+}
+mutation DeleteTransaction($id: ID!) { deleteTransaction(id: $id) { id } }
+```
+
+Códigos de erro previstos em `extensions.code`:
+
+- `UNAUTHENTICATED`
+- `BAD_USER_INPUT`
+- `NOT_FOUND`
+- `CONFLICT`
+- `CATEGORY_IN_USE`
+- `INTERNAL_SERVER_ERROR`
 
 ## Tratamento de erros
 
-**Backend**
-
-- Falha de env na boot: processo encerra com mensagem clara.
-- Erros GraphQL: mensagens tipadas; detalhes internos não vazam em produção.
-- Erro de banco na query `health`: reportado no payload de diagnóstico sem derrubar o processo.
-
-**Frontend**
-
-- Estados explícitos: `idle` | `loading` | `success` | `error` na tela inicial de diagnóstico.
-- Mensagens amigáveis; sem expor stack traces.
+- Mensagens de login genéricas (`Invalid email or password.`) — sem revelar existência de conta.
+- Sem exposição de `passwordHash`, tokens ou stack traces ao cliente.
+- Unicidade (e-mail / nome de categoria) → `CONFLICT`.
+- Logs sem senhas, JWTs ou hashes.
 
 ## Política de CORS
 
-- Origem permitida configurável via `CORS_ORIGIN` (padrão: `http://localhost:5173`).
-- Credentials habilitados para suporte futuro a cookies se necessário; autenticação prevista via Authorization header.
+- Origem: `CORS_ORIGIN` (padrão `http://localhost:5173`).
+- Headers permitidos incluem `Authorization`.
 - Sem `origin: '*'`.
 
 ## Variáveis de ambiente
 
 | Variável | App | Uso |
 |----------|-----|-----|
-| `JWT_SECRET` | backend | Assinatura JWT (obrigatória; validada no boot) |
-| `DATABASE_URL` | backend | Conexão Prisma/SQLite |
-| `PORT` | backend | Porta HTTP (padrão 4000) |
-| `CORS_ORIGIN` | backend | Origem frontend permitida |
-| `VITE_BACKEND_URL` | frontend | URL do endpoint GraphQL |
+| `JWT_SECRET` | backend | Assinatura JWT (obrigatória) |
+| `JWT_EXPIRES_IN` | backend | Expiração JWT (padrão `7d`) |
+| `DATABASE_URL` | backend | Prisma/SQLite |
+| `PORT` | backend | Porta HTTP (padrão `4000`) |
+| `CORS_ORIGIN` | backend | Origem frontend |
+| `VITE_BACKEND_URL` | frontend | Endpoint GraphQL |
 
-Arquivos `.env` não são versionados. Apenas `.env.example`.
+`.env` não versionado. `.env.example` contém apenas as chaves obrigatórias do enunciado no backend (`JWT_SECRET`, `DATABASE_URL`).
 
 ## Estratégia de testes
 
-| Nível | Etapa 1 | Próximas etapas |
-|-------|---------|-----------------|
-| Unitário / smoke | Query GraphQL `health`; renderização React | Serviços de domínio |
-| Integração | — | Auth + CRUD com banco de teste |
-| Aceitação | — | Fluxos ponta a ponta e revisão visual Figma |
+| Nível | Cobertura atual |
+|-------|-----------------|
+| Smoke | `health` |
+| Integração GraphQL | Auth, CRUD, ownership, valores inválidos — SQLite temporário por suíte |
+| Frontend | Renderização da tela inicial (Etapa 1) |
+| Aceitação / E2E browser | Etapa 4 |
 
-Validações de qualidade da fundação: typecheck, lint, build, smoke GraphQL, renderização, `git diff --check`.
+## Dependências backend relevantes
+
+- `graphql-yoga`, `graphql`
+- `@prisma/client`, `prisma`
+- `bcryptjs`, `jose`
+- `zod`, `dotenv`
+- `vitest`
 
 ## Decisões conscientemente adiadas
 
-- Next.js (proibido pelo enunciado)
-- Tailwind / shadcn (opcionais; tema CSS variables suficiente na Etapa 1)
-- React Query / RHF (justificáveis quando houver formulários e cache de lista)
-- Camadas DDD / repositories genéricos
+- Frontend funcional (Etapa 3)
+- Refresh tokens, OAuth, recuperação de senha, RBAC
+- Next.js, REST, serviços cloud
 - Deploy e repositório público

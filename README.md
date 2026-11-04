@@ -4,10 +4,10 @@ Aplicação full stack de gerenciamento financeiro — desafio prático da fase 
 
 ## Stack
 
-| Camada   | Tecnologias                                      |
-|----------|--------------------------------------------------|
-| Backend  | Node.js, TypeScript, GraphQL Yoga, Prisma, SQLite |
-| Frontend | React, TypeScript, Vite, GraphQL                 |
+| Camada   | Tecnologias                                                         |
+|----------|---------------------------------------------------------------------|
+| Backend  | Node.js, TypeScript, GraphQL Yoga, Prisma, SQLite, Zod, bcryptjs, jose |
+| Frontend | React, TypeScript, Vite, GraphQL                                    |
 
 ## Estrutura
 
@@ -30,25 +30,48 @@ financy-rocketseat/
 ```bash
 cd backend
 cp .env.example .env
-# Preencha JWT_SECRET e DATABASE_URL
+# JWT_SECRET=... (mín. 16 chars)
+# DATABASE_URL=file:./dev.db
 npm install
-npx prisma migrate dev
+npx prisma migrate deploy
 npm run dev
 ```
 
 Servidor padrão: `http://localhost:4000/graphql`
+
+Scripts úteis:
+
+```bash
+npm run typecheck
+npm run test
+npm run build
+npx prisma migrate dev   # criar novas migrations em desenvolvimento
+npx prisma studio
+```
+
+Variáveis opcionais: `PORT`, `CORS_ORIGIN`, `JWT_EXPIRES_IN` (padrão `7d`).
 
 ### Frontend
 
 ```bash
 cd frontend
 cp .env.example .env
-# Defina VITE_BACKEND_URL=http://localhost:4000/graphql
+# VITE_BACKEND_URL=http://localhost:4000/graphql
 npm install
 npm run dev
 ```
 
 App padrão: `http://localhost:5173`
+
+## Contratos GraphQL (backend)
+
+Públicas: `health`, `register`, `login`.
+
+Privadas (header `Authorization: Bearer <token>`): `me`, CRUD de `categories` e `transactions`.
+
+Valores monetários usam **centavos inteiros** (`amount: Int!`), sempre positivos; a direção é `INCOME` | `EXPENSE`.
+
+Exemplos e códigos de erro: [docs/architecture.md](docs/architecture.md).
 
 ## Documentação
 
@@ -63,9 +86,9 @@ App padrão: `http://localhost:5173`
 
 ## Status atual
 
-**Etapa 1 — Foundation** em andamento: estrutura, servidor GraphQL de diagnóstico, Prisma/SQLite, cliente GraphQL e UI inicial.
-
-Autenticação, CRUD e aderência completa ao Figma serão implementados nas etapas seguintes.
+- **Etapa 1 — Foundation:** concluída.
+- **Etapa 2 — Backend Core:** autenticação JWT, CRUD de categorias/transações e isolamento por usuário.
+- **Etapa 3 — Frontend Functional:** pendente (UI completa e alinhamento Figma).
 
 ## Licença
 
