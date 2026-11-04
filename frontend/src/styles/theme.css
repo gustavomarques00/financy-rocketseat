@@ -1,0 +1,48 @@
+:root {
+  /* Theme base oriented by Financy Figma Community preview (light desktop finance UI).
+     Exact design tokens pending full frame inspection of the official file. */
+  --color-bg: #f3f4f6;
+  --color-surface: #ffffff;
+  --color-ink: #1a1d23;
+  --color-ink-muted: #5b6472;
+  --color-border: #e5e7eb;
+  --color-brand: #1b7a4e;
+  --color-brand-soft: #e8f5ee;
+  --color-accent: #6d5efc;
+  --color-accent-soft: #efedff;
+  --color-danger: #c0392b;
+  --color-danger-soft: #fdecea;
+  --shadow-soft: 0 12px 40px rgba(26, 29, 35, 0.06);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --font-sans: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background:
+    radial-gradient(circle at top left, rgba(27, 122, 78, 0.08), transparent 40%),
+    radial-gradient(circle at top right, rgba(109, 94, 252, 0.08), transparent 35%),
+    var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
