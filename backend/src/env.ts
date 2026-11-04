@@ -5,6 +5,7 @@ config()
 
 const envSchema = z.object({
   JWT_SECRET: z.string().min(16, 'JWT_SECRET must be at least 16 characters'),
+  JWT_EXPIRES_IN: z.string().min(1).default('7d'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   PORT: z.coerce.number().int().positive().default(4000),
   CORS_ORIGIN: z.string().url().default('http://localhost:5173'),
@@ -13,7 +14,9 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>
 
-export function loadEnv(overrides?: Partial<Record<keyof Env, string>>): Env {
+export function loadEnv(
+  overrides?: Partial<Record<keyof Env, string | undefined>>,
+): Env {
   const parsed = envSchema.safeParse({
     ...process.env,
     ...overrides,

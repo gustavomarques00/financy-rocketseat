@@ -1,72 +1,41 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import type { Server } from 'node:http'
-import { loadEnv } from './env.js'
-import { createAppServer } from './server.js'
-import { prisma } from './lib/prisma.js'
-
-const TEST_PORT = 4010
+import { graphqlRequest } from './test/graphql-client.js'
+import { startTestApp, type TestApp } from './test/test-app.js'
 
 describe('GraphQL health query', () => {
-  let server: Server
-  let url: string
+  let app: TestApp
 
   beforeAll(async () => {
-    process.env.JWT_SECRET ??= 'test-jwt-secret-min-16-chars'
-    process.env.DATABASE_URL ??= 'file:./test.db'
-    process.env.PORT = String(TEST_PORT)
-    process.env.CORS_ORIGIN ??= 'http://localhost:5173'
-    process.env.NODE_ENV = 'test'
-
-    const env = loadEnv()
-    const app = createAppServer(env)
-
-    server = app.server
-    url = `http://127.0.0.1:${TEST_PORT}${app.endpoint}`
-
-    await new Promise<void>((resolve, reject) => {
-      server.once('error', reject)
-      server.listen(TEST_PORT, '127.0.0.1', () => resolve())
-    })
-  })
+    app = await startTestApp()
+  }, 60_000)
 
   afterAll(async () => {
-    await new Promise<void>((resolve, reject) => {
-      server.close((error) => (error ? reject(error) : resolve()))
-    })
-    await prisma.$disconnect()
+    if (app) {
+      await app.close()
+    }
   })
 
   it('returns diagnostic health payload', async () => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        query: /* GraphQL */ `
-          query HealthCheck {
-            health {
-              status
-              service
-              timestamp
-              database
-            }
-          }
-        `,
-      }),
-    })
-
-    expect(response.status).toBe(200)
-
-    const body = (await response.json()) as {
-      data?: {
-        health: {
-          status: string
-          service: string
-          timestamp: string
-          database: string
-        }
+    const body = await graphqlRequest<{
+      health: {
+        status: string
+        service: string
+        timestamp: string
+        database: string
       }
-      errors?: unknown[]
-    }
+    }>(
+      app.url,
+      /* GraphQL */ `
+        query HealthCheck {
+          health {
+            status
+            service
+            timestamp
+            database
+          }
+        }
+      `,
+    )
 
     expect(body.errors).toBeUndefined()
     expect(body.data?.health.service).toBe('financy-backend')
