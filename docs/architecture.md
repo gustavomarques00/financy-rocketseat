@@ -1,6 +1,6 @@
 # Arquitetura — Financy
 
-Decisões técnicas das Etapas 1 e 2. Objetivo: aplicação simples, consistente e fácil de avaliar.
+Decisões técnicas das Etapas 1–3. Objetivo: aplicação simples, consistente e fácil de avaliar.
 
 ## Organização frontend / backend
 
@@ -9,13 +9,49 @@ financy-rocketseat/
 ├── backend/          # API GraphQL (Node.js + TypeScript)
 │   ├── prisma/       # Schema e migrações
 │   └── src/          # Servidor, auth, serviços, schema GraphQL
-├── frontend/         # SPA React + Vite + TypeScript (Etapa 3 pendente)
-│   └── src/
+├── frontend/         # SPA React + Vite + TypeScript
+│   └── src/          # Auth, páginas, cliente GraphQL, UI
 └── docs/
 ```
 
 - Monorepo com dois pacotes npm independentes.
 - Sem compartilhamento de código tipado entre apps nesta fase.
+
+## Frontend (Etapa 3)
+
+### Estrutura
+
+- `auth/` — `AuthProvider`, token em memória + `sessionStorage`, `useAuth`
+- `lib/graphql/` — cliente tipado (`api`), operations, erros
+- `lib/money.ts` — conversão centavos ↔ exibição (`Intl.NumberFormat`)
+- `pages/` — Login, Register, Dashboard, Transactions, Categories, Account
+- `components/` — shell, modais de categoria/transação, UI base
+- `routes/` — `ProtectedRoute` / `PublicOnlyRoute`
+
+### Rotas
+
+| Path | Guard | Página |
+|------|-------|--------|
+| `/login`, `/register` | público | autenticação |
+| `/` | privado | dashboard |
+| `/transactions` | privado | CRUD transações |
+| `/categories` | privado | CRUD categorias |
+| `/account` | privado | perfil + logout |
+
+### Sessão
+
+- Token JWT enviado como `Authorization: Bearer <token>`
+- Persistência: memória + `sessionStorage` (não sobrevive ao fechar o navegador)
+- **Não** é equivalente a cookie HttpOnly; XSS ainda pode ler o token
+- Logout e falha `UNAUTHENTICATED` limpam token, usuário e estado financeiro carregado
+- Páginas privadas não renderizam conteúdo antes do bootstrap da sessão
+
+### Modais
+
+1. Categoria (criar/editar)
+2. Transação (criar/editar)
+
+Visual alinhado ao preview Community + tema existente; fidelidade pixel-perfect **não** afirmada (`FIGMA_PARTIAL` em `docs/figma-screen-inventory.md`).
 
 ## Comunicação GraphQL
 

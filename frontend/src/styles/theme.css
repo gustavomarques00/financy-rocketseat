@@ -1,6 +1,6 @@
 :root {
-  /* Theme base oriented by Financy Figma Community preview (light desktop finance UI).
-     Exact design tokens pending full frame inspection of the official file. */
+  /* Visual direction oriented by Financy Community preview + existing brand.
+     Official Figma Style Guide tokens were not fully accessible (FIGMA_PARTIAL). */
   --color-bg: #f3f4f6;
   --color-surface: #ffffff;
   --color-ink: #1a1d23;
@@ -12,6 +12,7 @@
   --color-accent-soft: #efedff;
   --color-danger: #c0392b;
   --color-danger-soft: #fdecea;
+  --color-success: #1b7a4e;
   --shadow-soft: 0 12px 40px rgba(26, 29, 35, 0.06);
   --radius-lg: 20px;
   --radius-md: 12px;
@@ -36,13 +37,18 @@ body {
   color: var(--color-ink);
   background:
     radial-gradient(circle at top left, rgba(27, 122, 78, 0.08), transparent 40%),
-    radial-gradient(circle at top right, rgba(109, 94, 252, 0.08), transparent 35%),
+    radial-gradient(circle at top right, rgba(109, 94, 252, 0.06), transparent 35%),
     var(--color-bg);
   -webkit-font-smoothing: antialiased;
 }
 
+a {
+  color: var(--color-brand);
+}
+
 button,
 input,
-textarea {
+textarea,
+select {
   font: inherit;
 }
