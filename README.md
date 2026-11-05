@@ -15,7 +15,8 @@ Aplicação full stack de gerenciamento financeiro — desafio prático da fase 
 financy-rocketseat/
 ├── backend/     # API GraphQL + Prisma/SQLite
 ├── frontend/    # React + Vite
-└── docs/        # Requisitos, arquitetura, plano, inventário Figma
+├── e2e/         # Playwright (aceitação)
+└── docs/        # Requisitos, arquitetura, plano, matriz e Figma
 ```
 
 ## Pré-requisitos
@@ -64,11 +65,23 @@ App: `http://localhost:5173`
 
 Sessão: JWT em memória + `sessionStorage` (documentado em `docs/architecture.md`). Header `Authorization: Bearer <token>`.
 
+## Testes
+
+```bash
+cd backend && npm test
+cd frontend && npm test
+cd e2e && npm install && npx playwright install chromium && npm test
+```
+
+O E2E sobe backend e frontend locais em portas isoladas (`4100` e `5174`), aplica as migrations em um SQLite temporário (`e2e/.tmp`) e cobre desktop e mobile. Não usa serviços externos.
+
 ## Scripts
 
 **Backend:** `dev`, `typecheck`, `test`, `build`, `prisma:migrate`
 
 **Frontend:** `dev`, `typecheck`, `lint`, `test`, `build`
+
+**E2E:** `test`
 
 ## Documentação
 
@@ -76,6 +89,7 @@ Sessão: JWT em memória + `sessionStorage` (documentado em `docs/architecture.m
 - [Arquitetura](docs/architecture.md)
 - [Plano de implementação](docs/implementation-plan.md)
 - [Inventário Figma](docs/figma-screen-inventory.md)
+- [Matriz de conformidade](docs/submission-requirements-matrix.md)
 
 ## Fontes oficiais
 
@@ -86,8 +100,8 @@ Sessão: JWT em memória + `sessionStorage` (documentado em `docs/architecture.m
 
 - **Etapa 1 — Foundation:** concluída
 - **Etapa 2 — Backend Core:** concluída
-- **Etapa 3 — Frontend Functional:** autenticação, dashboard e CRUD via GraphQL real (Figma `FIGMA_PARTIAL`)
-- **Etapa 4 — Acceptance & Submission:** pendente
+- **Etapa 3 — Frontend Functional:** concluída (PR #3)
+- **Etapa 4 — Acceptance:** matriz, E2E e revisão de segurança preparados para revisão. O repositório permanece privado e o desafio ainda não foi enviado.
 
 ## Licença
 

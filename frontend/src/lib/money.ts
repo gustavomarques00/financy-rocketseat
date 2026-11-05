@@ -9,15 +9,19 @@ export function centsToDisplay(cents: number): string {
 
 /**
  * Parses a Brazilian-style money input into positive integer cents.
- * Accepts "12,34", "12.34", "1234" (whole reais), rejects invalid/negative/zero.
+ * When a comma is present it is the decimal separator and dots are thousands
+ * separators (`2.500,00`). Without a comma, a dot is the decimal separator (`12.34`).
+ * Whole reais (`1234`) are accepted. Zero, negative and extra precision are rejected.
  */
 export function parseMoneyInputToCents(raw: string): number | null {
-  const trimmed = raw.trim()
+  const trimmed = raw.trim().replace(/\s/g, '')
   if (!trimmed) {
     return null
   }
 
-  const normalized = trimmed.replace(/\s/g, '').replace(',', '.')
+  const normalized = trimmed.includes(',')
+    ? trimmed.replace(/\./g, '').replace(',', '.')
+    : trimmed
   if (!/^\d+(\.\d{1,2})?$/.test(normalized)) {
     return null
   }

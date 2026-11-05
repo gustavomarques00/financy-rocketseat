@@ -117,6 +117,12 @@ Fluxo do contexto:
 
 Fail-closed: token ausente, inválido ou expirado → `UNAUTHENTICATED` nas rotas privadas.
 
+### Risco residual da sessão
+
+O JWT fica em memória e em `sessionStorage`. Isso não equivale a cookie `HttpOnly`: um XSS na origem do frontend pode ler o token até a aba ser fechada. A autorização continua no servidor. Não há refresh token, OAuth ou RBAC porque não são requisitos obrigatórios.
+
+A dependência de desenvolvimento `prisma` (via `deepmerge-ts`) possui advisory de alta severidade no CLI. Ela não entra no runtime do servidor GraphQL (`@prisma/client` usado pela API). Não houve upgrade major forçado nesta etapa.
+
 ## Isolamento / ownership
 
 - Toda leitura/escrita de Category e Transaction filtra por `{ id, userId }`.

@@ -14,6 +14,7 @@ describe('money helpers', () => {
   it('parses valid money inputs into cents', () => {
     expect(parseMoneyInputToCents('12,34')).toBe(1234)
     expect(parseMoneyInputToCents('12.5')).toBe(1250)
+    expect(parseMoneyInputToCents('2.500,00')).toBe(250000)
     expect(parseMoneyInputToCents('10')).toBe(1000)
   })
 
