@@ -113,7 +113,7 @@ Entregas verificáveis sem datas arbitrárias. Cada etapa possui critérios obje
 6. Repositório permanece privado
 7. Submissão à Rocketseat **não** é feita nesta execução
 
-**Status:** esta execução. Publicação e envio acadêmico ficam para autorização explícita posterior.
+**Status:** PR #4 integrada na `main`. O checklist `docs/publication-readiness.md` registra a revisão final. Publicação e envio acadêmico continuam pendentes de autorização explícita.
 
 ---
 

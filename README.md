@@ -90,6 +90,7 @@ O E2E sobe backend e frontend locais em portas isoladas (`4100` e `5174`), aplic
 - [Plano de implementação](docs/implementation-plan.md)
 - [Inventário Figma](docs/figma-screen-inventory.md)
 - [Matriz de conformidade](docs/submission-requirements-matrix.md)
+- [Checklist de publicação](docs/publication-readiness.md)
 
 ## Fontes oficiais
 
