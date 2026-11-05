@@ -7,7 +7,7 @@ Este documento prepara uma decisão futura. A publicação e o envio à Rocketse
 - Repositório: `gustavomarques00/financy-rocketseat`
 - Visibilidade: **PRIVATE**
 - `main`: merge da PR #4 incluído
-- Figma: `FIGMA_PARTIAL`
+- Figma: `FIGMA_PARTIAL` (seis telas comparadas em `docs/figma-fidelity-audit.md`; overlays de Gestão e escala tipográfica ainda incompletos)
 - Submissão acadêmica: não realizada
 
 ## Requisitos obrigatórios
