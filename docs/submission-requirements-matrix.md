@@ -28,7 +28,7 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 | FE-GQL | Cliente GraphQL real | Obrigatório | `graphql-request` | `frontend/src/lib/graphql/client.ts` | E2E contra API local | PASS | — |
 | FE-MODAL | Dois formulários modais | Obrigatório | categoria e transação | `components/categories`, `components/transactions` | Playwright abre e salva os dois | PASS | Nomes oficiais dos frames não verificados |
 | FE-ENV | `frontend/.env.example` | Obrigatório | `VITE_BACKEND_URL` | `frontend/.env.example` | inspeção | PASS | — |
-| FE-FIGMA | Interface baseada no Figma | Obrigatório no produto final | tema claro, cards e lista | `docs/figma-screen-inventory.md` | página Community e API de design reconsultadas na Etapa 5 | PARTIAL | API rejeita o fileKey; frames oficiais não inspecionados |
+| FE-FIGMA | Interface baseada no Figma | Obrigatório no produto final | tema claro, cards e lista | `docs/figma-fidelity-audit.md` | frames oficiais inspecionados no arquivo `IR3TQC9ofQKZ2km01tq8EB` | PARTIAL | Seis telas alinhadas na estrutura; Style Guide e modais de Gestão ainda incompletos |
 | FE-RESP | Desktop e mobile | Obrigatório no brief da Etapa 4 | CSS com breakpoint | `frontend/src/App.css` | projetos Playwright desktop e Pixel 5 | PASS | Não compara com frames mobile oficiais |
 | DEL-LAYOUT | Pastas `backend/` e `frontend/` | Obrigatório | monorepo | raiz do repositório | inspeção | PASS | — |
 | DEL-README | Instalação e execução documentadas | Obrigatório | README | `README.md` | comandos reexecutados nesta etapa | PASS | — |

@@ -1,39 +1,33 @@
 import { useAuth } from '../auth/useAuth'
 import { Button } from '../components/ui/Button'
+import { initials } from '../lib/categoryTone'
 
 export function AccountPage() {
   const { user, logout } = useAuth()
 
   return (
-    <section className="page-section">
-      <div className="page-header">
-        <div>
-          <h1>Conta</h1>
-          <p className="muted">Dados do usuário autenticado via query `me`.</p>
+    <section className="page-section profile-page">
+      <h1 className="sr-only">Conta</h1>
+      <div className="profile-card">
+        <div className="avatar-link avatar-large" aria-hidden="true">
+          {initials(user?.name ?? '')}
         </div>
-      </div>
-
-      <div className="panel account-panel">
-        <dl className="meta-grid">
-          <div>
-            <dt>Nome</dt>
-            <dd>{user?.name}</dd>
-          </div>
-          <div>
-            <dt>E-mail</dt>
-            <dd>{user?.email}</dd>
-          </div>
-          <div>
-            <dt>Criado em</dt>
-            <dd>
-              {user?.createdAt
-                ? new Date(user.createdAt).toLocaleString('pt-BR')
-                : '—'}
-            </dd>
-          </div>
-        </dl>
+        <h2>{user?.name}</h2>
+        <p className="muted">{user?.email}</p>
+        <label className="field" htmlFor="profile-name">
+          <span className="field-label">Nome completo</span>
+          <input id="profile-name" className="field-control" value={user?.name ?? ''} readOnly />
+        </label>
+        <label className="field" htmlFor="profile-email">
+          <span className="field-label">E-mail</span>
+          <input id="profile-email" className="field-control" value={user?.email ?? ''} disabled />
+        </label>
+        <p className="field-hint">O e-mail não pode ser alterado</p>
+        <Button type="button" disabled>
+          Salvar alterações
+        </Button>
         <Button variant="secondary" onClick={logout}>
-          Encerrar sessão
+          Sair da conta
         </Button>
       </div>
     </section>

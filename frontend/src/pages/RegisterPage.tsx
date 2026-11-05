@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import { useAuth } from '../auth/useAuth'
+import { Logo } from '../components/ui/Logo'
 import { Button } from '../components/ui/Button'
 import { Feedback } from '../components/ui/Feedback'
 import { Field, TextInput } from '../components/ui/Field'
@@ -33,9 +34,9 @@ export function RegisterPage() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <p className="brand">Financy</p>
+        <Logo />
         <h1>Criar conta</h1>
-        <p className="muted">Cadastre-se para gerenciar transações e categorias.</p>
+        <p className="muted">Comece a controlar suas finanças ainda hoje</p>
         <form
           className="form-stack"
           onSubmit={handleSubmit(async (values) => {
@@ -48,14 +49,20 @@ export function RegisterPage() {
             }
           })}
         >
-          <Field label="Nome" htmlFor="register-name" error={errors.name?.message}>
-            <TextInput id="register-name" autoComplete="name" {...register('name')} />
+          <Field label="Nome completo" htmlFor="register-name" error={errors.name?.message}>
+            <TextInput
+              id="register-name"
+              autoComplete="name"
+              placeholder="Seu nome completo"
+              {...register('name')}
+            />
           </Field>
           <Field label="E-mail" htmlFor="register-email" error={errors.email?.message}>
             <TextInput
               id="register-email"
               type="email"
               autoComplete="email"
+              placeholder="mail@exemplo.com"
               {...register('email')}
             />
           </Field>
@@ -64,17 +71,21 @@ export function RegisterPage() {
               id="register-password"
               type="password"
               autoComplete="new-password"
+              placeholder="Digite sua senha"
               {...register('password')}
             />
           </Field>
+          <p className="field-hint">A senha deve ter no mínimo 8 caracteres</p>
           {error ? <Feedback tone="error">{error}</Feedback> : null}
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Criando…' : 'Cadastrar'}
           </Button>
         </form>
-        <p className="auth-switch">
-          Já tem conta? <Link to="/login">Entrar</Link>
-        </p>
+        <div className="auth-divider">ou</div>
+        <p className="auth-switch">Já tem uma conta?</p>
+        <Link className="btn btn-secondary" to="/login">
+          Fazer login
+        </Link>
       </div>
     </div>
   )

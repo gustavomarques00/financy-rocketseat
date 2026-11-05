@@ -1,8 +1,10 @@
 # Inventário visual — Financy (Figma)
 
-**Referência oficial:** https://www.figma.com/community/file/1580994817007013257/financy
+**Referência oficial:** https://www.figma.com/design/IR3TQC9ofQKZ2km01tq8EB/Financy--Community-?node-id=0-1
 
 **Status geral da auditoria:** `FIGMA_PARTIAL`
+
+Revisão da Etapa 7: o arquivo `IR3TQC9ofQKZ2km01tq8EB` foi aberto no editor. As seis telas oficiais e o quadro de cores `1085:713` foram comparados. A estrutura passou a usar a navegação superior, Inter e as cores lidas. O detalhe interno dos overlays de Gestão e a escala tipográfica completa continuam sem leitura número a número. Ver `docs/figma-fidelity-audit.md`.
 
 Revisão da Etapa 5 (5 nov 2026):
 
@@ -19,8 +21,8 @@ Classificação desta revisão: todas as telas abaixo permanecem `PARTIAL` ou `N
 |-----------|-----------|
 | Community page (browser) | Preview público e descrição acessíveis em execuções anteriores; nesta execução a UI ficou obstruída por preferências de cookies / login |
 | MCP Figma (`create_session`) | `fileKey` numérico de Community rejeitado (`Invalid fileKey`) |
-| Frames, Style Guide, tokens oficiais | **Não acessíveis** nó a nó |
-| Enunciado FTR (seis páginas / dois modais) | Confirmado textualmente pelo brief da Etapa 3; nomes oficiais dos frames **não verificados** no arquivo |
+| Frames oficiais no arquivo `IR3TQC9ofQKZ2km01tq8EB` | Login `3101:353`, Cadastro `3103:1915`, Dashboard `3103:1987`, Transações `3104:362`, Categorias `3104:2028`, Perfil `3104:2925` inspecionados na Etapa 7 |
+| Style Guide e Gestão | Cores principais lidas; escala tipográfica e texto interno dos dois overlays de Gestão ainda incompletos |
 
 **Regra seguida:** não inventar nomes oficiais de frames/tokens. Implementação visual alinhada ao preview público (dashboard claro, cartões de resumo, lista de transações, identidade verde) e aos requisitos textuais.
 
@@ -39,20 +41,15 @@ Classificação desta revisão: todas as telas abaixo permanecem `PARTIAL` ou `N
 | Modal Categoria | Brief: 2 modais | Criar/editar categoria | Campo nome, submit, cancelar/Esc | Mutations de categoria | Overlay responsivo | Parcial |
 | Modal Transação | Brief: 2 modais | Criar/editar transação | Descrição, valor, tipo, data, categoria | Mutations de transação; centavos | Overlay responsivo | Parcial |
 
-## Tokens / tipografia (não oficiais)
+## Tokens / tipografia
 
-Derivados do preview e do tema já existente no repositório — **não** afirmados como tokens do Style Guide Rocketseat:
-
-- Fundo claro (`#f3f4f6`), superfície branca
-- Marca verde (`#1b7a4e`)
-- Acento roxo suave para tags (`#6d5efc`) — presente no preview
-- Fonte: Plus Jakarta Sans
+Cores de marca, cinzas e acentos lidos no quadro `1085:713` estão em `frontend/src/styles/theme.css`. A escala tipográfica completa do Style Guide não foi extraída. A família usada é Inter.
 
 ## Revisão visual posterior
 
-Quando o arquivo Figma for duplicado/aberto com `fileKey` válido, revalidar:
+Ainda falta reler, com zoom suficiente:
 
-1. Nomes reais das seis páginas e dos dois modais
-2. Style Guide (cores, tipografia, espaçamentos)
-3. Ícones e estados (vazio, erro, loading)
-4. Fidelidade pixel dos layouts desktop/mobile
+1. Texto interno dos dois overlays da seção Gestão
+2. Escala tipográfica, raios e sombras do Style Guide
+3. SVG oficial do logotipo
+4. Ícones ilustrativos dos cards do dashboard

@@ -19,8 +19,8 @@ async function register(page: Page, name: string, email: string, password: strin
 
 async function logout(page: Page) {
   await visibleLink(page, 'Conta').click()
-  await page.getByRole('button', { name: 'Encerrar sessão' }).click()
-  await expect(page.getByRole('heading', { name: 'Entrar' })).toBeVisible()
+  await page.getByRole('button', { name: 'Sair da conta' }).click()
+  await expect(page.getByRole('heading', { name: 'Fazer login' })).toBeVisible()
 }
 
 test.beforeEach(async ({ page }) => {
@@ -29,7 +29,7 @@ test.beforeEach(async ({ page }) => {
 
 test('anonymous users are redirected away from private routes', async ({ page }) => {
   await page.goto('/transactions')
-  await expect(page.getByRole('heading', { name: 'Entrar' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Fazer login' })).toBeVisible()
 })
 
 test('registers, manages categories and transactions, then logs out', async ({ page }) => {
@@ -40,30 +40,32 @@ test('registers, manages categories and transactions, then logs out', async ({ p
 
   await visibleLink(page, 'Categorias').click()
   await page.getByRole('button', { name: 'Nova categoria' }).click()
-  await page.getByLabel('Nome').fill('Moradia')
-  await page.getByRole('button', { name: 'Salvar' }).click()
-  await expect(page.getByText('Moradia')).toBeVisible()
+  await page.getByRole('dialog').getByLabel('Nome').fill('Moradia')
+  await page.getByRole('dialog').getByRole('button', { name: 'Salvar' }).click()
+  await expect(page.getByText('Moradia').first()).toBeVisible()
 
   await page.getByRole('button', { name: 'Editar' }).click()
-  await page.getByLabel('Nome').fill('Casa')
-  await page.getByRole('button', { name: 'Salvar' }).click()
-  await expect(page.getByText('Casa')).toBeVisible()
+  await page.getByRole('dialog').getByLabel('Nome').fill('Casa')
+  await page.getByRole('dialog').getByRole('button', { name: 'Salvar' }).click()
+  await expect(page.getByText('Casa').first()).toBeVisible()
 
   await visibleLink(page, 'Transações').click()
   await page.getByRole('button', { name: 'Nova transação' }).click()
-  await page.getByLabel('Descrição').fill('Salário')
-  await page.getByLabel('Valor (R$)').fill('1.000,00')
-  await page.getByLabel('Tipo').selectOption('INCOME')
-  await page.getByLabel('Categoria').selectOption({ label: 'Casa' })
-  await page.getByRole('button', { name: 'Salvar' }).click()
+  const salaryDialog = page.getByRole('dialog')
+  await salaryDialog.getByLabel('Descrição').fill('Salário')
+  await salaryDialog.getByLabel('Valor (R$)').fill('1.000,00')
+  await salaryDialog.getByLabel('Tipo').selectOption('INCOME')
+  await salaryDialog.getByLabel('Categoria').selectOption({ label: 'Casa' })
+  await salaryDialog.getByRole('button', { name: 'Salvar' }).click()
   await expect(page.getByText('Salário')).toBeVisible()
 
   await page.getByRole('button', { name: 'Nova transação' }).click()
-  await page.getByLabel('Descrição').fill('Aluguel')
-  await page.getByLabel('Valor (R$)').fill('250,00')
-  await page.getByLabel('Tipo').selectOption('EXPENSE')
-  await page.getByLabel('Categoria').selectOption({ label: 'Casa' })
-  await page.getByRole('button', { name: 'Salvar' }).click()
+  const rentDialog = page.getByRole('dialog')
+  await rentDialog.getByLabel('Descrição').fill('Aluguel')
+  await rentDialog.getByLabel('Valor (R$)').fill('250,00')
+  await rentDialog.getByLabel('Tipo').selectOption('EXPENSE')
+  await rentDialog.getByLabel('Categoria').selectOption({ label: 'Casa' })
+  await rentDialog.getByRole('button', { name: 'Salvar' }).click()
   await expect(page.getByText('Aluguel')).toBeVisible()
 
   await visibleLink(page, 'Dashboard').click()
@@ -73,8 +75,9 @@ test('registers, manages categories and transactions, then logs out', async ({ p
 
   await visibleLink(page, 'Transações').click()
   await page.getByRole('listitem').filter({ hasText: 'Salário' }).getByRole('button', { name: 'Editar' }).click()
-  await page.getByLabel('Descrição').fill('Salário atualizado')
-  await page.getByRole('button', { name: 'Salvar' }).click()
+  const editDialog = page.getByRole('dialog')
+  await editDialog.getByLabel('Descrição').fill('Salário atualizado')
+  await editDialog.getByRole('button', { name: 'Salvar' }).click()
   await expect(page.getByText('Salário atualizado')).toBeVisible()
 
   await visibleLink(page, 'Categorias').click()
@@ -94,7 +97,7 @@ test('registers, manages categories and transactions, then logs out', async ({ p
 
   await logout(page)
   await page.goto('/categories')
-  await expect(page.getByRole('heading', { name: 'Entrar' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Fazer login' })).toBeVisible()
 })
 
 test('users do not see each other categories', async ({ page }) => {
@@ -102,9 +105,9 @@ test('users do not see each other categories', async ({ page }) => {
   await register(page, 'User A', uniqueEmail('user-a'), password)
   await visibleLink(page, 'Categorias').click()
   await page.getByRole('button', { name: 'Nova categoria' }).click()
-  await page.getByLabel('Nome').fill('Privada A')
-  await page.getByRole('button', { name: 'Salvar' }).click()
-  await expect(page.getByText('Privada A')).toBeVisible()
+  await page.getByRole('dialog').getByLabel('Nome').fill('Privada A')
+  await page.getByRole('dialog').getByRole('button', { name: 'Salvar' }).click()
+  await expect(page.getByText('Privada A').first()).toBeVisible()
   await logout(page)
 
   await page.goto('/register')

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth/useAuth'
 import {
@@ -11,6 +11,7 @@ import { useFinanceData } from '../hooks/useFinanceData'
 import { api } from '../lib/graphql/client'
 import { getErrorMessage } from '../lib/graphql/errors'
 import type { Transaction } from '../lib/graphql/types'
+import { categoryTone } from '../lib/categoryTone'
 import { centsToDisplay } from '../lib/money'
 
 export function TransactionsPage() {
@@ -23,6 +24,31 @@ export function TransactionsPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [typeFilter, setTypeFilter] = useState<'ALL' | 'INCOME' | 'EXPENSE'>('ALL')
+  const [categoryFilter, setCategoryFilter] = useState('ALL')
+  const [page, setPage] = useState(1)
+
+  const filtered = useMemo(() => {
+    const needle = query.trim().toLocaleLowerCase('pt-BR')
+    return transactions.filter((item) => {
+      if (needle && !item.description.toLocaleLowerCase('pt-BR').includes(needle)) {
+        return false
+      }
+      if (typeFilter !== 'ALL' && item.type !== typeFilter) {
+        return false
+      }
+      if (categoryFilter !== 'ALL' && item.categoryId !== categoryFilter) {
+        return false
+      }
+      return true
+    })
+  }, [transactions, query, typeFilter, categoryFilter])
+
+  const pageSize = 10
+  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize))
+  const currentPage = Math.min(page, pageCount)
+  const visible = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   async function guardRequest<T>(operation: () => Promise<T>): Promise<T | null> {
     try {
@@ -41,7 +67,7 @@ export function TransactionsPage() {
       <div className="page-header">
         <div>
           <h1>Transações</h1>
-          <p className="muted">Receitas e despesas do seu usuário autenticado.</p>
+          <p className="muted">Gerencie todas as suas transações financeiras</p>
         </div>
         <Button
           onClick={() => {
@@ -61,29 +87,77 @@ export function TransactionsPage() {
 
       {!loading && !error ? (
         <div className="panel">
+          <div className="filters">
+            <label className="field">
+              <span className="field-label">Buscar</span>
+              <input
+                className="field-control"
+                value={query}
+                placeholder="Buscar por descrição"
+                onChange={(event) => {
+                  setQuery(event.target.value)
+                  setPage(1)
+                }}
+              />
+            </label>
+            <label className="field">
+              <span className="field-label">Tipo</span>
+              <select
+                className="field-control"
+                aria-label="Filtrar por tipo"
+                value={typeFilter}
+                onChange={(event) => {
+                  setTypeFilter(event.target.value as 'ALL' | 'INCOME' | 'EXPENSE')
+                  setPage(1)
+                }}
+              >
+                <option value="ALL">Todos</option>
+                <option value="INCOME">Entrada</option>
+                <option value="EXPENSE">Saída</option>
+              </select>
+            </label>
+            <label className="field">
+              <span className="field-label">Categoria</span>
+              <select
+                className="field-control"
+                aria-label="Filtrar por categoria"
+                value={categoryFilter}
+                onChange={(event) => {
+                  setCategoryFilter(event.target.value)
+                  setPage(1)
+                }}
+              >
+                <option value="ALL">Todas</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           {transactions.length === 0 ? (
             <EmptyState
               title="Nenhuma transação"
               description="Registre movimentações vinculadas às suas categorias."
             />
+          ) : filtered.length === 0 ? (
+            <EmptyState title="Nenhuma transação" description="Nenhum resultado para os filtros atuais." />
           ) : (
-            <ul className="data-list">
-              {transactions.map((item) => (
+            <ul className="data-list ledger">
+              {visible.map((item) => (
                 <li key={item.id} className="data-row">
                   <div>
                     <strong>{item.description}</strong>
-                    <p className="muted">
-                      {item.category.name} · {new Date(item.date).toLocaleDateString('pt-BR')}
-                    </p>
+                    <p className="muted">{new Date(item.date).toLocaleDateString('pt-BR')}</p>
                   </div>
-                  <div className="row-meta">
-                    <span className={`tag tag-${item.type.toLowerCase()}`}>
-                      {item.type === 'INCOME' ? 'Receita' : 'Despesa'}
-                    </span>
-                    <strong className={item.type === 'INCOME' ? 'positive' : 'negative'}>
-                      {item.type === 'INCOME' ? '+' : '-'}
-                      {centsToDisplay(item.amount)}
-                    </strong>
+                  <span className={`tag tag-${categoryTone(item.category.name)}`}>{item.category.name}</span>
+                  <span className={`tag tag-${item.type === 'INCOME' ? 'green' : 'red'}`}>
+                    {item.type === 'INCOME' ? 'Entrada' : 'Saída'}
+                  </span>
+                  <strong className={item.type === 'INCOME' ? 'positive' : 'negative'}>
+                    {item.type === 'INCOME' ? '+' : '-'} {centsToDisplay(item.amount)}
+                  </strong>
                     <div className="row-actions">
                       <Button
                         variant="ghost"
@@ -118,11 +192,29 @@ export function TransactionsPage() {
                         Excluir
                       </Button>
                     </div>
-                  </div>
                 </li>
               ))}
             </ul>
           )}
+          {filtered.length > pageSize ? (
+            <div className="pager">
+              <span className="muted">
+                {(currentPage - 1) * pageSize + 1} a {Math.min(currentPage * pageSize, filtered.length)} /{' '}
+                {filtered.length} resultados
+              </span>
+              <div className="row-actions">
+                {Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => (
+                  <Button
+                    key={number}
+                    variant={number === currentPage ? 'primary' : 'secondary'}
+                    onClick={() => setPage(number)}
+                  >
+                    {number}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
