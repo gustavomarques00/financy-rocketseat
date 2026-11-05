@@ -4,10 +4,10 @@ Aplicação full stack de gerenciamento financeiro — desafio prático da fase 
 
 ## Stack
 
-| Camada   | Tecnologias                                                         |
-|----------|---------------------------------------------------------------------|
+| Camada   | Tecnologias |
+|----------|-------------|
 | Backend  | Node.js, TypeScript, GraphQL Yoga, Prisma, SQLite, Zod, bcryptjs, jose |
-| Frontend | React, TypeScript, Vite, GraphQL                                    |
+| Frontend | React, TypeScript, Vite, GraphQL (`graphql-request`), React Router, React Hook Form, Zod |
 
 ## Estrutura
 
@@ -15,7 +15,7 @@ Aplicação full stack de gerenciamento financeiro — desafio prático da fase 
 financy-rocketseat/
 ├── backend/     # API GraphQL + Prisma/SQLite
 ├── frontend/    # React + Vite
-└── docs/        # Requisitos, arquitetura e plano
+└── docs/        # Requisitos, arquitetura, plano, inventário Figma
 ```
 
 ## Pré-requisitos
@@ -37,19 +37,7 @@ npx prisma migrate deploy
 npm run dev
 ```
 
-Servidor padrão: `http://localhost:4000/graphql`
-
-Scripts úteis:
-
-```bash
-npm run typecheck
-npm run test
-npm run build
-npx prisma migrate dev   # criar novas migrations em desenvolvimento
-npx prisma studio
-```
-
-Variáveis opcionais: `PORT`, `CORS_ORIGIN`, `JWT_EXPIRES_IN` (padrão `7d`).
+Servidor: `http://localhost:4000/graphql`
 
 ### Frontend
 
@@ -61,23 +49,33 @@ npm install
 npm run dev
 ```
 
-App padrão: `http://localhost:5173`
+App: `http://localhost:5173`
 
-## Contratos GraphQL (backend)
+## Rotas do frontend
 
-Públicas: `health`, `register`, `login`.
+| Rota | Acesso | Função |
+|------|--------|--------|
+| `/login` | público | Login |
+| `/register` | público | Cadastro |
+| `/` | autenticado | Dashboard (saldo, receitas, despesas, recentes) |
+| `/transactions` | autenticado | CRUD de transações |
+| `/categories` | autenticado | CRUD de categorias |
+| `/account` | autenticado | Dados do usuário + logout |
 
-Privadas (header `Authorization: Bearer <token>`): `me`, CRUD de `categories` e `transactions`.
+Sessão: JWT em memória + `sessionStorage` (documentado em `docs/architecture.md`). Header `Authorization: Bearer <token>`.
 
-Valores monetários usam **centavos inteiros** (`amount: Int!`), sempre positivos; a direção é `INCOME` | `EXPENSE`.
+## Scripts
 
-Exemplos e códigos de erro: [docs/architecture.md](docs/architecture.md).
+**Backend:** `dev`, `typecheck`, `test`, `build`, `prisma:migrate`
+
+**Frontend:** `dev`, `typecheck`, `lint`, `test`, `build`
 
 ## Documentação
 
 - [Requisitos](docs/requirements.md)
 - [Arquitetura](docs/architecture.md)
 - [Plano de implementação](docs/implementation-plan.md)
+- [Inventário Figma](docs/figma-screen-inventory.md)
 
 ## Fontes oficiais
 
@@ -86,9 +84,10 @@ Exemplos e códigos de erro: [docs/architecture.md](docs/architecture.md).
 
 ## Status atual
 
-- **Etapa 1 — Foundation:** concluída.
-- **Etapa 2 — Backend Core:** autenticação JWT, CRUD de categorias/transações e isolamento por usuário.
-- **Etapa 3 — Frontend Functional:** pendente (UI completa e alinhamento Figma).
+- **Etapa 1 — Foundation:** concluída
+- **Etapa 2 — Backend Core:** concluída
+- **Etapa 3 — Frontend Functional:** autenticação, dashboard e CRUD via GraphQL real (Figma `FIGMA_PARTIAL`)
+- **Etapa 4 — Acceptance & Submission:** pendente
 
 ## Licença
 

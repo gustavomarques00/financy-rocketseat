@@ -55,33 +55,37 @@ Entregas verificáveis sem datas arbitrárias. Cada etapa possui critérios obje
 10. Nenhum secret commitado
 11. PR `feat/financy-backend-core` aberta (sem merge automático nesta execução)
 
-**Status:** esta execução.
+**Status:** concluída (PR #2 mergeada).
 
 ---
 
 ## Etapa 3 — Frontend Functional
 
-**Objetivo:** aplicação utilizável alinhada ao Figma.
+**Objetivo:** aplicação utilizável alinhada às referências Figma verificáveis.
 
 ### Entregáveis
 
-- Fluxos de autenticação (cadastro/login)
-- Sessão no cliente
-- Dashboard autenticado
-- Listagem e formulários de transações e categorias
-- Integração GraphQL com o Backend Core
+- Fluxos de autenticação (cadastro/login/logout)
+- Sessão no cliente (Bearer JWT)
+- Dashboard autenticado com dados reais
+- CRUD de categorias e transações via GraphQL
+- Dois modais de formulário
 - Estados de erro e carregamento
-- Interface conforme Figma oficial
+- Inventário Figma (`FIGMA_PARTIAL` quando frames oficiais inacessíveis)
 
 ### Critérios de conclusão
 
-1. Cadastro e login funcionam ponta a ponta contra o backend local
+1. Cadastro e login funcionam pela interface contra o backend local
 2. Rotas autenticadas redirecionam usuário não logado
 3. Dashboard reflete dados reais do usuário autenticado
-4. CRUD operável pela UI
-5. Erros de API compreensíveis
-6. Revisão visual mínima contra o Figma
-7. Lint, typecheck e build do frontend passam
+4. CRUD de categorias e transações operável pela UI
+5. Erros de API compreensíveis; `CATEGORY_IN_USE` tratado
+6. Limitações do Figma documentadas sem inventar frames
+7. Lint, typecheck, testes e build do frontend passam
+8. Backend continua passando nos testes
+9. PR `feat/financy-frontend-functional` aberta (sem merge nesta execução)
+
+**Status:** esta execução.
 
 ---
 
