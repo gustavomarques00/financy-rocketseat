@@ -41,7 +41,7 @@ Na página Projeto (`3:376`), a seção Gestão aparece à direita do Perfil com
 | Dashboard | `3103:1987` | Barra lateral escura e três cards genéricos | Topo com logo, navegação central e avatar; cards Saldo total, Receitas do mês e Despesas do mês; colunas de recentes e categorias | P0 | Estrutura corrigida. Ícones ilustrativos dos cards e totais mensais filtrados por calendário não foram reproduzidos. Os totais continuam sendo o agregado real das transações do usuário. |
 | Transações | `3104:362` | Lista simples | Tabela com busca, tipo, categoria, badges Entrada/Saída e paginação | P1 | Busca, tipo, categoria e páginas de 10 itens são locais, sem novo contrato GraphQL. O seletor de período do frame não foi adicionado. |
 | Categorias | `3104:2028` | Lista simples | Título, três indicadores e cards | P1 | Cards e contagens reais. Descrição e ícone por categoria não existem no modelo e não foram inventados. |
-| Perfil | `3104:2925` | Página "Conta" com grade de metadados | Cartão central, avatar, nome, e-mail bloqueado, salvar e sair | P1 | Layout alinhado. "Salvar alterações" permanece desabilitado: o schema não tem mutation de perfil e o backend não foi alterado. |
+| Perfil | `3104:2925` | Página "Conta" com grade de metadados | Cartão central, avatar, nome, e-mail bloqueado, salvar e sair | P1 | O botão inoperante foi removido. Nome e e-mail são texto somente leitura, com aviso de consulta. Logout permanece. O frame oficial não foi relido nesta etapa por limite da API. |
 | Modal categoria | Gestão, id não lido | Modal funcional com nome | Overlay e cartão | P2 | Mantido o campo Nome. Texto interno do frame não foi lido. |
 | Modal transação | Gestão, id não lido | Modal com os campos do CRUD | Overlay; o frame também sugere calendário | P2 | Campos do CRUD preservados. O calendário expandido do frame não foi inspecionado em detalhe. |
 
@@ -49,4 +49,4 @@ Adaptação mobile (390 px) é decisão de implementação: o arquivo inspeciona
 
 ## Estado
 
-`FIGMA_PARTIAL` permanece. As seis telas e a página de cores foram comparadas o suficiente para corrigir a estrutura, mas o Style Guide completo, o SVG oficial e o texto interno dos modais de Gestão não foram verificados em detalhe.
+`FIGMA_PARTIAL` permanece. Na Etapa 9 a API do Figma continuou no limite do plano Starter; nenhuma leitura nova dos frames, da escala tipográfica, do SVG oficial ou dos overlays de Gestão foi obtida. As evidências anteriores continuam válidas. O logo da interface segue a reconstrução geométrica. Filtro de período, descrições e ícones de categoria e calendário expandido não foram adicionados: não fazem parte do contrato funcional.

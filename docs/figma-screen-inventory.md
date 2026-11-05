@@ -4,7 +4,7 @@
 
 **Status geral da auditoria:** `FIGMA_PARTIAL`
 
-Revisão da Etapa 7: o arquivo `IR3TQC9ofQKZ2km01tq8EB` foi aberto no editor. As seis telas oficiais e o quadro de cores `1085:713` foram comparados. A estrutura passou a usar a navegação superior, Inter e as cores lidas. O detalhe interno dos overlays de Gestão e a escala tipográfica completa continuam sem leitura número a número. Ver `docs/figma-fidelity-audit.md`.
+Revisão da Etapa 7: o arquivo `IR3TQC9ofQKZ2km01tq8EB` foi aberto no editor. As seis telas oficiais e o quadro de cores `1085:713` foram comparados. A estrutura passou a usar a navegação superior, Inter e as cores lidas. O detalhe interno dos overlays de Gestão e a escala tipográfica completa continuam sem leitura número a número. Na Etapa 9 a API continuou limitada; a página de conta passou a ser somente consulta. Ver `docs/figma-fidelity-audit.md`.
 
 Revisão da Etapa 5 (5 nov 2026):
 

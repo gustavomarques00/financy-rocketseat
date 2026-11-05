@@ -502,11 +502,34 @@
   text-align: center;
 }
 
-.profile-card .field,
 .profile-card .btn,
-.profile-card .field-hint {
+.profile-card .field-hint,
+.profile-details {
   width: 100%;
   text-align: left;
+}
+
+.profile-details {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0.25rem 0 0;
+}
+
+.profile-details div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.profile-details dt {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.profile-details dd {
+  margin: 0;
+  color: var(--color-gray-800);
+  font-weight: 500;
 }
 
 @media (max-width: 860px) {
