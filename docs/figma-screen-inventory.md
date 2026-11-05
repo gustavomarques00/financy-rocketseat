@@ -4,6 +4,8 @@
 
 **Status geral da auditoria:** `FIGMA_PARTIAL`
 
+Revisão da Etapa 4: o `fileKey` numérico da Community continua incompatível com a API de design. Nenhum frame, Style Guide ou token oficial novo foi inspecionado. A interface implementada permanece alinhada ao preview público e aos requisitos textuais, sem fidelidade pixel-perfect.
+
 ## Limitações de acesso
 
 | Tentativa | Resultado |

@@ -83,9 +83,9 @@ Entregas verificáveis sem datas arbitrárias. Cada etapa possui critérios obje
 6. Limitações do Figma documentadas sem inventar frames
 7. Lint, typecheck, testes e build do frontend passam
 8. Backend continua passando nos testes
-9. PR `feat/financy-frontend-functional` aberta (sem merge nesta execução)
+9. PR `feat/financy-frontend-functional` integrada
 
-**Status:** esta execução.
+**Status:** concluída (PR #3 mergeada).
 
 ---
 
@@ -103,13 +103,17 @@ Entregas verificáveis sem datas arbitrárias. Cada etapa possui critérios obje
 - Preparação para publicação (pública **somente** com autorização explícita)
 - Submissão na Rocketseat
 
-### Critérios de conclusão
+### Critérios de conclusão desta execução
 
-1. Requisitos obrigatórios atendidos
-2. README permite subir backend e frontend do zero
-3. Auditoria de segurança sem findings bloqueantes
-4. Repositório público apenas após autorização
-5. Entrega registrada na Rocketseat
+1. PR #3 integrada na `main`
+2. Matriz de requisitos criada com evidência de código e testes
+3. Playwright cobre cadastro, CRUD, totais, logout, rota protegida e isolamento visual
+4. README permite instalar, migrar, executar e testar
+5. Auditoria de segurança documentada, sem correção fora do escopo obrigatório
+6. Repositório permanece privado
+7. Submissão à Rocketseat **não** é feita nesta execução
+
+**Status:** esta execução. Publicação e envio acadêmico ficam para autorização explícita posterior.
 
 ---
 
@@ -117,15 +121,16 @@ Entregas verificáveis sem datas arbitrárias. Cada etapa possui critérios obje
 
 ```text
 Etapa 1 (Foundation) ✓
-    └── Etapa 2 (Backend Core) ← atual
-            └── Etapa 3 (Frontend Functional)
-                    └── Etapa 4 (Acceptance & Submission)
+    └── Etapa 2 (Backend Core) ✓
+            └── Etapa 3 (Frontend Functional) ✓
+                    └── Etapa 4 (Acceptance & Submission) ← atual
 ```
 
 ## Fora de escopo até autorização explícita
 
-- Merge da PR da Etapa 2 (revisão humana)
+- Merge da PR da Etapa 4
 - Deploy em produção
 - Tornar o repositório público
+- Submissão na Rocketseat
 - Publicação no LinkedIn
 - Alterações na Engineering Knowledge Base
