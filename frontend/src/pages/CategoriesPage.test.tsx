@@ -80,7 +80,7 @@ describe('CategoriesPage', () => {
     await waitFor(() => {
       expect(apiMocks.createCategory).toHaveBeenCalledWith('token-abc', { name: 'Moradia' })
     })
-    expect(await screen.findByText('Moradia')).toBeInTheDocument()
+    expect(await screen.findAllByText('Moradia')).not.toHaveLength(0)
   })
 
   it('surfaces CATEGORY_IN_USE on delete', async () => {
@@ -95,7 +95,7 @@ describe('CategoriesPage', () => {
 
     renderCategories()
 
-    expect(await screen.findByText('Moradia')).toBeInTheDocument()
+    expect(await screen.findAllByText('Moradia')).not.toHaveLength(0)
     await user.click(screen.getByRole('button', { name: /excluir/i }))
 
     expect(

@@ -7,12 +7,13 @@ import { EmptyState, Feedback, LoadingBlock } from '../components/ui/Feedback'
 import { useFinanceData } from '../hooks/useFinanceData'
 import { api } from '../lib/graphql/client'
 import { getErrorCode, getErrorMessage } from '../lib/graphql/errors'
+import { categoryTone } from '../lib/categoryTone'
 import type { Category } from '../lib/graphql/types'
 
 export function CategoriesPage() {
   const { token, handleAuthFailure } = useAuth()
   const navigate = useNavigate()
-  const { loading, error, categories, refresh } = useFinanceData()
+  const { loading, error, categories, transactions, refresh } = useFinanceData()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -37,7 +38,7 @@ export function CategoriesPage() {
       <div className="page-header">
         <div>
           <h1>Categorias</h1>
-          <p className="muted">Organize suas receitas e despesas.</p>
+          <p className="muted">Organize suas transações por categorias</p>
         </div>
         <Button
           onClick={() => {
@@ -57,17 +58,42 @@ export function CategoriesPage() {
 
       {!loading && !error ? (
         <div className="panel">
+          <div className="summary-grid summary-grid-compact">
+            <article className="summary-card">
+              <p className="summary-value">{categories.length}</p>
+              <p className="eyebrow">Total de categorias</p>
+            </article>
+            <article className="summary-card">
+              <p className="summary-value">{transactions.length}</p>
+              <p className="eyebrow">Total de transações</p>
+            </article>
+            <article className="summary-card">
+              <p className="summary-value">
+                {categories.length === 0
+                  ? '—'
+                  : [...categories].sort((a, b) => {
+                      const countA = transactions.filter((item) => item.categoryId === a.id).length
+                      const countB = transactions.filter((item) => item.categoryId === b.id).length
+                      return countB - countA || a.name.localeCompare(b.name, 'pt-BR')
+                    })[0]?.name}
+              </p>
+              <p className="eyebrow">Categoria mais utilizada</p>
+            </article>
+          </div>
           {categories.length === 0 ? (
             <EmptyState
               title="Nenhuma categoria"
               description="Crie categorias para classificar suas transações."
             />
           ) : (
-            <ul className="data-list">
-              {categories.map((category) => (
-                <li key={category.id} className="data-row">
-                  <strong>{category.name}</strong>
-                  <div className="row-actions">
+            <ul className="category-grid">
+              {categories.map((category) => {
+                const count = transactions.filter((item) => item.categoryId === category.id).length
+                return (
+                <li key={category.id} className="category-card">
+                  <div className="category-card-top">
+                    <strong>{category.name}</strong>
+                    <div className="row-actions">
                     <Button
                       variant="ghost"
                       onClick={() => {
@@ -106,9 +132,15 @@ export function CategoriesPage() {
                     >
                       Excluir
                     </Button>
+                    </div>
                   </div>
+                  <span className={`tag tag-${categoryTone(category.name)}`}>{category.name}</span>
+                  <span className="muted">
+                    {count} {count === 1 ? 'item' : 'itens'}
+                  </span>
                 </li>
-              ))}
+                )
+              })}
             </ul>
           )}
         </div>

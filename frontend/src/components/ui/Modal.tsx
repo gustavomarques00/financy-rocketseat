@@ -54,7 +54,7 @@ export function Modal({ title, open, onClose, children }: ModalProps) {
         <div className="modal-header">
           <h2 id={titleId}>{title}</h2>
           <Button variant="ghost" aria-label="Fechar" onClick={onClose}>
-            Fechar
+            ×
           </Button>
         </div>
         <div className="modal-body">{children}</div>

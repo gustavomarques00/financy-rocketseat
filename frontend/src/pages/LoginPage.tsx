@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 import { useAuth } from '../auth/useAuth'
+import { Logo } from '../components/ui/Logo'
 import { Button } from '../components/ui/Button'
 import { Feedback } from '../components/ui/Feedback'
 import { Field, TextInput } from '../components/ui/Field'
@@ -32,9 +33,9 @@ export function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <p className="brand">Financy</p>
-        <h1>Entrar</h1>
-        <p className="muted">Acesse sua organização financeira.</p>
+        <Logo />
+        <h1>Fazer login</h1>
+        <p className="muted">Entre na sua conta para continuar</p>
         <form
           className="form-stack"
           onSubmit={handleSubmit(async (values) => {
@@ -48,24 +49,42 @@ export function LoginPage() {
           })}
         >
           <Field label="E-mail" htmlFor="login-email" error={errors.email?.message}>
-            <TextInput id="login-email" type="email" autoComplete="email" {...register('email')} />
+            <TextInput
+              id="login-email"
+              type="email"
+              autoComplete="email"
+              placeholder="mail@exemplo.com"
+              {...register('email')}
+            />
           </Field>
           <Field label="Senha" htmlFor="login-password" error={errors.password?.message}>
             <TextInput
               id="login-password"
               type="password"
               autoComplete="current-password"
+              placeholder="Digite sua senha"
               {...register('password')}
             />
           </Field>
+          <div className="auth-row">
+            <label className="check-row">
+              <input type="checkbox" />
+              Lembrar-me
+            </label>
+            <button type="button" className="text-link" disabled>
+              Recuperar senha
+            </button>
+          </div>
           {error ? <Feedback tone="error">{error}</Feedback> : null}
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Entrando…' : 'Entrar'}
           </Button>
         </form>
-        <p className="auth-switch">
-          Não tem conta? <Link to="/register">Criar cadastro</Link>
-        </p>
+        <div className="auth-divider">ou</div>
+        <p className="auth-switch">Ainda não tem uma conta?</p>
+        <Link className="btn btn-secondary" to="/register">
+          Criar conta
+        </Link>
       </div>
     </div>
   )

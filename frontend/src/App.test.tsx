@@ -46,7 +46,7 @@ describe('Financy frontend app', () => {
     window.history.pushState({}, '', '/transactions')
     render(<App />)
 
-    expect(await screen.findByRole('heading', { name: /entrar/i })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: /fazer login/i })).toBeInTheDocument()
     expect(screen.getByLabelText(/e-mail/i)).toBeInTheDocument()
   })
 
@@ -90,8 +90,8 @@ describe('Financy frontend app', () => {
     await user.click(screen.getByRole('button', { name: /entrar/i }))
 
     expect(await screen.findByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
-    expect(await screen.findByText(/^Receitas$/i)).toBeInTheDocument()
-    expect(screen.getByText(/^Despesas$/i)).toBeInTheDocument()
+    expect(await screen.findByText(/receitas do mês/i)).toBeInTheDocument()
+    expect(screen.getByText(/despesas do mês/i)).toBeInTheDocument()
     await waitFor(() => {
       expect(screen.getByText(/750,00/)).toBeInTheDocument()
     })
@@ -109,7 +109,7 @@ describe('Financy frontend app', () => {
     window.history.pushState({}, '', '/register')
     render(<App />)
 
-    await user.type(await screen.findByLabelText(/^nome$/i), 'Gustavo')
+    await user.type(await screen.findByLabelText(/nome completo/i), 'Gustavo')
     await user.type(screen.getByLabelText(/e-mail/i), 'gustavo@example.com')
     await user.type(screen.getByLabelText(/senha/i), 'password-1')
     await user.click(screen.getByRole('button', { name: /cadastrar/i }))
