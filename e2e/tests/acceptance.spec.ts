@@ -17,8 +17,12 @@ async function register(page: Page, name: string, email: string, password: strin
   await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible()
 }
 
-async function logout(page: Page) {
+async function logout(page: Page, name: string, email: string) {
   await visibleLink(page, 'Conta').click()
+  await expect(page.getByRole('heading', { name })).toBeVisible()
+  await expect(page.getByText(email).first()).toBeVisible()
+  await expect(page.getByText(/apenas para consulta nesta versão/i)).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Salvar alterações' })).toHaveCount(0)
   await page.getByRole('button', { name: 'Sair da conta' }).click()
   await expect(page.getByRole('heading', { name: 'Fazer login' })).toBeVisible()
 }
@@ -29,6 +33,8 @@ test.beforeEach(async ({ page }) => {
 
 test('anonymous users are redirected away from private routes', async ({ page }) => {
   await page.goto('/transactions')
+  await expect(page.getByRole('heading', { name: 'Fazer login' })).toBeVisible()
+  await page.goto('/account')
   await expect(page.getByRole('heading', { name: 'Fazer login' })).toBeVisible()
 })
 
@@ -95,20 +101,21 @@ test('registers, manages categories and transactions, then logs out', async ({ p
   await page.getByRole('listitem').filter({ hasText: 'Casa' }).getByRole('button', { name: 'Excluir' }).click()
   await expect(page.getByText('Nenhuma categoria')).toBeVisible()
 
-  await logout(page)
+  await logout(page, 'Acceptance User', email)
   await page.goto('/categories')
   await expect(page.getByRole('heading', { name: 'Fazer login' })).toBeVisible()
 })
 
 test('users do not see each other categories', async ({ page }) => {
   const password = 'password-1'
-  await register(page, 'User A', uniqueEmail('user-a'), password)
+  const email = uniqueEmail('user-a')
+  await register(page, 'User A', email, password)
   await visibleLink(page, 'Categorias').click()
   await page.getByRole('button', { name: 'Nova categoria' }).click()
   await page.getByRole('dialog').getByLabel('Nome').fill('Privada A')
   await page.getByRole('dialog').getByRole('button', { name: 'Salvar' }).click()
   await expect(page.getByText('Privada A').first()).toBeVisible()
-  await logout(page)
+  await logout(page, 'User A', email)
 
   await page.goto('/register')
   await register(page, 'User B', uniqueEmail('user-b'), password)
