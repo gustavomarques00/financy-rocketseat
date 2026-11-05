@@ -4,7 +4,14 @@
 
 **Status geral da auditoria:** `FIGMA_PARTIAL`
 
-Revisão da Etapa 4: o `fileKey` numérico da Community continua incompatível com a API de design. Nenhum frame, Style Guide ou token oficial novo foi inspecionado. A interface implementada permanece alinhada ao preview público e aos requisitos textuais, sem fidelidade pixel-perfect.
+Revisão da Etapa 5 (5 nov 2026):
+
+- A API de design rejeitou o identificador público `1580994817007013257` (`Invalid fileKey`).
+- A página Community chegou a expor o título Financy, o autor Rocketseat e o texto “site desktop de organização de finanças, com gestão de transações e categorias”, além dos controles Open in Figma e Preview.
+- O fluxo seguinte abriu as preferências de cookies e não revelou frames, Style Guide, tokens, tipografia ou espaçamentos oficiais.
+- Nenhuma divergência visual nova foi comprovada contra um frame oficial. Por isso nenhuma tela foi redesenhada nesta execução.
+
+Classificação desta revisão: todas as telas abaixo permanecem `PARTIAL` ou `NOT_VERIFIED`. Nenhuma recebeu `MATCH`.
 
 ## Limitações de acesso
 
