@@ -37,3 +37,8 @@ Thumbs.db
 .cache/
 .turbo/
 .eslintcache
+e2e/.tmp/
+e2e/test-results/
+e2e/playwright-report/
+playwright-report/
+test-results/
