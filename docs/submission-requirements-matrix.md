@@ -28,7 +28,7 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 | FE-GQL | Cliente GraphQL real | Obrigatório | `graphql-request` | `frontend/src/lib/graphql/client.ts` | E2E contra API local | PASS | — |
 | FE-MODAL | Dois formulários modais | Obrigatório | categoria e transação | `components/categories`, `components/transactions` | Playwright abre e salva os dois | PASS | Nomes oficiais dos frames não verificados |
 | FE-ENV | `frontend/.env.example` | Obrigatório | `VITE_BACKEND_URL` | `frontend/.env.example` | inspeção | PASS | — |
-| FE-FIGMA | Interface baseada no Figma | Obrigatório no produto final | tema claro, cards e lista | `docs/figma-fidelity-audit.md` | frames oficiais inspecionados no arquivo `IR3TQC9ofQKZ2km01tq8EB` | PARTIAL | Seis telas alinhadas na estrutura; Style Guide e modais de Gestão ainda incompletos |
+| FE-FIGMA | Interface baseada no Figma | Obrigatório no produto final | tema claro, cards e lista | `docs/figma-fidelity-audit.md` | frames oficiais inspecionados no arquivo `IR3TQC9ofQKZ2km01tq8EB` | PARTIAL | Estrutura das seis telas alinhada. Logo oficial, escala tipográfica e texto dos overlays de Gestão continuam sem leitura. |
 | FE-RESP | Desktop e mobile | Obrigatório no brief da Etapa 4 | CSS com breakpoint | `frontend/src/App.css` | projetos Playwright desktop e Pixel 5 | PASS | Não compara com frames mobile oficiais |
 | DEL-LAYOUT | Pastas `backend/` e `frontend/` | Obrigatório | monorepo | raiz do repositório | inspeção | PASS | — |
 | DEL-README | Instalação e execução documentadas | Obrigatório | README | `README.md` | comandos reexecutados nesta etapa | PASS | — |
@@ -51,6 +51,7 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 ## Validação desta etapa
 
 - Backend: typecheck, 24 testes, build — PASS
-- Frontend: typecheck, lint, 13 testes, build — PASS após o ajuste do parser monetário
-- Playwright: 3 cenários em desktop e 3 em mobile — PASS
+- Frontend: typecheck, lint, 15 testes, build — PASS
+- Playwright: 3 cenários em desktop e 3 em mobile — PASS, incluindo consulta da conta e ausência do botão de salvamento
 - E2E usa SQLite temporário em `e2e/.tmp`, ignorado pelo Git
+- Contagem da matriz permanece 24 PASS, 3 PARTIAL, 0 FAIL, 0 NOT_VERIFIED, 2 NOT_APPLICABLE. `FE-FIGMA` não foi promovido.

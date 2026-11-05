@@ -61,7 +61,7 @@ App: `http://localhost:5173`
 | `/` | autenticado | Dashboard (saldo, receitas, despesas, recentes) |
 | `/transactions` | autenticado | CRUD de transações |
 | `/categories` | autenticado | CRUD de categorias |
-| `/account` | autenticado | Dados do usuário + logout |
+| `/account` | autenticado | Consulta do nome e do e-mail + logout |
 
 Sessão: JWT em memória + `sessionStorage` (documentado em `docs/architecture.md`). Header `Authorization: Bearer <token>`.
 
@@ -91,18 +91,26 @@ O E2E sobe backend e frontend locais em portas isoladas (`4100` e `5174`), aplic
 - [Inventário Figma](docs/figma-screen-inventory.md)
 - [Matriz de conformidade](docs/submission-requirements-matrix.md)
 - [Checklist de publicação](docs/publication-readiness.md)
+- [Auditoria visual](docs/figma-fidelity-audit.md)
+- [Checklist final de entrega](docs/final-release-checklist.md)
 
 ## Fontes oficiais
 
 - [Enunciado Rocketseat](https://ftr.rocketseat.com.br/projects/td-360-desafio-pratico-da-fase-3-financy?module_slug=avaliacao-de-expansao-de-habilidades)
-- [Figma Community — Financy](https://www.figma.com/community/file/1580994817007013257/financy)
+- [Figma — Financy Community](https://www.figma.com/design/IR3TQC9ofQKZ2km01tq8EB/Financy--Community-?node-id=0-1)
+
+## Limitações
+
+- A interface segue a estrutura dos frames oficiais, mas a fidelidade visual permanece `FIGMA_PARTIAL`: o SVG oficial do logo não foi exportado, e a escala tipográfica e o texto interno dos overlays de Gestão não foram lidos por completo.
+- A página de conta mostra nome e e-mail apenas para consulta. Não há edição de perfil.
+- "Lembrar-me" não altera a duração da sessão. "Recuperar senha" não tem endpoint.
+- Os totais do dashboard agregam as transações do usuário. Não há filtro de período no servidor.
+- A sessão usa JWT em `sessionStorage`, com o risco residual descrito em `docs/architecture.md`.
 
 ## Status atual
 
-- **Etapa 1 — Foundation:** concluída
-- **Etapa 2 — Backend Core:** concluída
-- **Etapa 3 — Frontend Functional:** concluída (PR #3)
-- **Etapa 4 — Acceptance:** matriz, E2E e revisão de segurança preparados para revisão. O repositório permanece privado e o desafio ainda não foi enviado.
+- **Etapas 1 a 4:** concluídas no histórico do repositório.
+- **Etapa 9 — acabamento:** página de conta somente leitura, testes e checklist de entrega. O repositório permanece privado. A publicação e o envio à Rocketseat não foram executados.
 
 ## Licença
 
