@@ -78,7 +78,12 @@ describe('CategoriesPage', () => {
     await user.click(screen.getByRole('button', { name: /salvar/i }))
 
     await waitFor(() => {
-      expect(apiMocks.createCategory).toHaveBeenCalledWith('token-abc', { name: 'Moradia' })
+      expect(apiMocks.createCategory).toHaveBeenCalledWith('token-abc', {
+        name: 'Moradia',
+        description: null,
+        icon: 'tag',
+        color: 'green',
+      })
     })
     expect(await screen.findAllByText('Moradia')).not.toHaveLength(0)
   })

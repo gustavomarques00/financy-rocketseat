@@ -18,6 +18,7 @@ const apiMocks = vi.hoisted(() => ({
   createTransaction: vi.fn(),
   updateTransaction: vi.fn(),
   deleteTransaction: vi.fn(),
+  updateMe: vi.fn(),
 }))
 
 vi.mock('../lib/graphql/client', () => ({
@@ -66,10 +67,21 @@ describe('AccountPage', () => {
     expect(await screen.findByRole('heading', { name: 'Conta Visual' })).toBeInTheDocument()
     expect(document.querySelector('.avatar-large')?.textContent).toBe('CV')
     expect(screen.getAllByText('visual.qa@example.com').length).toBeGreaterThan(0)
-    expect(screen.getByLabelText('Nome completo')).toHaveAttribute('readonly')
+    const nameInput = await screen.findByLabelText('Nome completo')
+    expect(nameInput).toHaveValue('Conta Visual')
     expect(screen.getByLabelText('E-mail')).toHaveAttribute('readonly')
     expect(screen.getByText(/não pode ser alterado/i)).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /salvar alterações/i })).not.toBeInTheDocument()
+    const saveButton = screen.getByRole('button', { name: /salvar alterações/i })
+    expect(saveButton).toBeDisabled()
+
+    apiMocks.updateMe.mockResolvedValue({ ...userFixture, name: 'Conta Nova' })
+    await user.clear(nameInput)
+    await user.type(nameInput, 'Conta Nova')
+    expect(saveButton).toBeEnabled()
+    await user.click(saveButton)
+    expect(await screen.findByRole('heading', { name: 'Conta Nova' })).toBeInTheDocument()
+    expect(apiMocks.updateMe).toHaveBeenCalledWith('token-abc', { name: 'Conta Nova' })
+    expect(screen.getByText(/alterações salvas/i)).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /sair da conta/i }))
     expect(await screen.findByText('Login page')).toBeInTheDocument()

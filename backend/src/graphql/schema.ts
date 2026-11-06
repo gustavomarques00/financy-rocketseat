@@ -6,6 +6,7 @@ import {
   getAuthenticatedUser,
   loginUser,
   registerUser,
+  updateOwnName,
 } from '../services/auth.js'
 import {
   createCategory,
@@ -57,6 +58,9 @@ const typeDefs = /* GraphQL */ `
   type Category {
     id: ID!
     name: String!
+    description: String
+    icon: String!
+    color: String!
     createdAt: String!
     updatedAt: String!
   }
@@ -64,6 +68,8 @@ const typeDefs = /* GraphQL */ `
   type CategoryRef {
     id: ID!
     name: String!
+    icon: String!
+    color: String!
   }
 
   type Transaction {
@@ -94,9 +100,19 @@ const typeDefs = /* GraphQL */ `
 
   input CreateCategoryInput {
     name: String!
+    description: String
+    icon: String
+    color: String
   }
 
   input UpdateCategoryInput {
+    name: String!
+    description: String
+    icon: String
+    color: String
+  }
+
+  input UpdateMeInput {
     name: String!
   }
 
@@ -128,6 +144,7 @@ const typeDefs = /* GraphQL */ `
   type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(input: LoginInput!): AuthPayload!
+    updateMe(input: UpdateMeInput!): User!
     createCategory(input: CreateCategoryInput!): Category!
     updateCategory(id: ID!, input: UpdateCategoryInput!): Category!
     deleteCategory(id: ID!): Category!
@@ -156,12 +173,18 @@ function serializeUser(user: {
 function serializeCategory(category: {
   id: string
   name: string
+  description: string | null
+  icon: string
+  color: string
   createdAt: Date
   updatedAt: Date
 }) {
   return {
     id: category.id,
     name: category.name,
+    description: category.description,
+    icon: category.icon,
+    color: category.color,
     createdAt: category.createdAt.toISOString(),
     updatedAt: category.updatedAt.toISOString(),
   }
@@ -176,7 +199,7 @@ function serializeTransaction(transaction: {
   categoryId: string
   createdAt: Date
   updatedAt: Date
-  category: { id: string; name: string }
+  category: { id: string; name: string; icon: string; color: string }
 }) {
   return {
     id: transaction.id,
@@ -282,6 +305,20 @@ const resolvers = {
           token: result.token,
           user: serializeUser(result.user),
         }
+      } catch (error) {
+        mapDomainError(error)
+      }
+    },
+
+    updateMe: async (
+      _parent: unknown,
+      args: { input: unknown },
+      context: GraphQLContext,
+    ) => {
+      try {
+        const userId = requireAuth(context.userId)
+        const user = await updateOwnName(context.prisma, userId, args.input)
+        return serializeUser(user)
       } catch (error) {
         mapDomainError(error)
       }

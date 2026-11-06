@@ -30,6 +30,18 @@ export const LOGIN_MUTATION = gql`
   }
 `
 
+export const UPDATE_ME_MUTATION = gql`
+  mutation UpdateMe($input: UpdateMeInput!) {
+    updateMe(input: $input) {
+      id
+      name
+      email
+      createdAt
+      updatedAt
+    }
+  }
+`
+
 export const ME_QUERY = gql`
   query Me {
     me {
@@ -47,6 +59,9 @@ export const CATEGORIES_QUERY = gql`
     categories {
       id
       name
+      description
+      icon
+      color
       createdAt
       updatedAt
     }
@@ -58,6 +73,9 @@ export const CREATE_CATEGORY_MUTATION = gql`
     createCategory(input: $input) {
       id
       name
+      description
+      icon
+      color
       createdAt
       updatedAt
     }
@@ -69,6 +87,9 @@ export const UPDATE_CATEGORY_MUTATION = gql`
     updateCategory(id: $id, input: $input) {
       id
       name
+      description
+      icon
+      color
       createdAt
       updatedAt
     }
@@ -96,6 +117,8 @@ export const TRANSACTIONS_QUERY = gql`
       category {
         id
         name
+        icon
+        color
       }
       createdAt
       updatedAt
@@ -115,6 +138,8 @@ export const CREATE_TRANSACTION_MUTATION = gql`
       category {
         id
         name
+        icon
+        color
       }
       createdAt
       updatedAt
@@ -134,6 +159,8 @@ export const UPDATE_TRANSACTION_MUTATION = gql`
       category {
         id
         name
+        icon
+        color
       }
       createdAt
       updatedAt

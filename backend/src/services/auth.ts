@@ -8,6 +8,7 @@ import {
   loginInputSchema,
   normalizeEmail,
   registerInputSchema,
+  updateMeInputSchema,
 } from '../validation/inputs.js'
 
 export type PublicUser = {
@@ -88,6 +89,29 @@ export async function loginUser(
 
   const token = await signAccessToken(user.id, env.JWT_SECRET, env.JWT_EXPIRES_IN)
   return { token, user: toPublicUser(user) }
+}
+
+export async function updateOwnName(
+  prisma: PrismaClient,
+  userId: string,
+  rawInput: unknown,
+): Promise<PublicUser> {
+  const parsed = updateMeInputSchema.safeParse(rawInput)
+  if (!parsed.success) {
+    throw new AppError(formatZodError(parsed.error), 'BAD_USER_INPUT', 400)
+  }
+
+  const existing = await prisma.user.findUnique({ where: { id: userId } })
+  if (!existing) {
+    throw new AppError('Authentication required.', 'UNAUTHENTICATED', 401)
+  }
+
+  const user = await prisma.user.update({
+    where: { id: existing.id },
+    data: { name: parsed.data.name },
+  })
+
+  return toPublicUser(user)
 }
 
 export async function getAuthenticatedUser(

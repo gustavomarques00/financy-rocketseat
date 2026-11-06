@@ -7,7 +7,7 @@ import { EmptyState, Feedback, LoadingBlock } from '../components/ui/Feedback'
 import { useFinanceData } from '../hooks/useFinanceData'
 import { api } from '../lib/graphql/client'
 import { getErrorCode, getErrorMessage } from '../lib/graphql/errors'
-import { categoryTone } from '../lib/categoryTone'
+import { categoryAppearance } from '../lib/categoryAppearance'
 import { Icon } from '../components/ui/Icon'
 import type { Category } from '../lib/graphql/types'
 
@@ -86,8 +86,8 @@ export function CategoriesPage() {
               </div>
             </article>
             <article className="summary-card stat-card">
-              <span className={`summary-icon tag tag-${categoryTone(topCategory?.name ?? '')}`}>
-                <Icon name="tag" />
+              <span className={`summary-icon tag tag-${categoryAppearance(topCategory ?? { name: '' }).color}`}>
+                <Icon name={categoryAppearance(topCategory ?? { name: '' }).icon} />
               </span>
               <div>
                 <p className="summary-value">{topCategory?.name ?? '—'}</p>
@@ -104,11 +104,12 @@ export function CategoriesPage() {
             <ul className="category-grid">
               {categories.map((category) => {
                 const count = transactions.filter((item) => item.categoryId === category.id).length
+                const appearance = categoryAppearance(category)
                 return (
                 <li key={category.id} className="category-card">
                   <div className="category-card-top">
-                    <span className={`summary-icon tag tag-${categoryTone(category.name)}`}>
-                      <Icon name="tag" />
+                    <span className={`summary-icon tag tag-${appearance.color}`}>
+                      <Icon name={appearance.icon} />
                     </span>
                     <div className="row-actions">
                     <Button
@@ -156,8 +157,9 @@ export function CategoriesPage() {
                     </div>
                   </div>
                   <strong>{category.name}</strong>
+                  {category.description ? <p className="muted">{category.description}</p> : null}
                   <div className="category-card-meta">
-                  <span className={`tag tag-${categoryTone(category.name)}`}>{category.name}</span>
+                  <span className={`tag tag-${appearance.color}`}>{category.name}</span>
                   <span className="muted">
                     {count} {count === 1 ? 'item' : 'itens'}
                   </span>

@@ -10,6 +10,8 @@ export type TransactionWithCategory = Transaction & {
   category: {
     id: string
     name: string
+    icon: string
+    color: string
   }
 }
 
@@ -36,7 +38,7 @@ export async function listTransactions(
     where: { userId },
     include: {
       category: {
-        select: { id: true, name: true },
+        select: { id: true, name: true, icon: true, color: true },
       },
     },
     orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
@@ -52,7 +54,7 @@ export async function getTransaction(
     where: { id, userId },
     include: {
       category: {
-        select: { id: true, name: true },
+        select: { id: true, name: true, icon: true, color: true },
       },
     },
   })
@@ -87,7 +89,7 @@ export async function createTransaction(
     },
     include: {
       category: {
-        select: { id: true, name: true },
+        select: { id: true, name: true, icon: true, color: true },
       },
     },
   })
@@ -130,7 +132,7 @@ export async function updateTransaction(
     },
     include: {
       category: {
-        select: { id: true, name: true },
+        select: { id: true, name: true, icon: true, color: true },
       },
     },
   })
@@ -145,7 +147,7 @@ export async function deleteTransaction(
     where: { id, userId },
     include: {
       category: {
-        select: { id: true, name: true },
+        select: { id: true, name: true, icon: true, color: true },
       },
     },
   })

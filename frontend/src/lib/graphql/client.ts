@@ -10,6 +10,7 @@ import {
   LOGIN_MUTATION,
   ME_QUERY,
   REGISTER_MUTATION,
+  UPDATE_ME_MUTATION,
   TRANSACTIONS_QUERY,
   UPDATE_CATEGORY_MUTATION,
   UPDATE_TRANSACTION_MUTATION,
@@ -63,19 +64,32 @@ export const api = {
     return request<{ me: User }>(token, ME_QUERY).then((data) => data.me)
   },
 
+  updateMe(token: string, input: { name: string }) {
+    return request<{ updateMe: User }>(token, UPDATE_ME_MUTATION, { input }).then(
+      (data) => data.updateMe,
+    )
+  },
+
   categories(token: string) {
     return request<{ categories: Category[] }>(token, CATEGORIES_QUERY).then(
       (data) => data.categories,
     )
   },
 
-  createCategory(token: string, input: { name: string }) {
+  createCategory(
+    token: string,
+    input: { name: string; description?: string | null; icon?: string; color?: string },
+  ) {
     return request<{ createCategory: Category }>(token, CREATE_CATEGORY_MUTATION, {
       input,
     }).then((data) => data.createCategory)
   },
 
-  updateCategory(token: string, id: string, input: { name: string }) {
+  updateCategory(
+    token: string,
+    id: string,
+    input: { name: string; description?: string | null; icon?: string; color?: string },
+  ) {
     return request<{ updateCategory: Category }>(token, UPDATE_CATEGORY_MUTATION, {
       id,
       input,
