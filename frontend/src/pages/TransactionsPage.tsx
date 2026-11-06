@@ -193,7 +193,8 @@ export function TransactionsPage() {
                     <p className="muted">{new Date(item.date).toLocaleDateString('pt-BR')}</p>
                   </div>
                   <span className={`tag tag-${categoryTone(item.category.name)}`}>{item.category.name}</span>
-                  <span className={`tag tag-${item.type === 'INCOME' ? 'green' : 'red'}`}>
+                  <span className={item.type === 'INCOME' ? 'type-indicator positive' : 'type-indicator negative'}>
+                    <Icon name={item.type === 'INCOME' ? 'circle-arrow-up' : 'circle-arrow-down'} />
                     {item.type === 'INCOME' ? 'Entrada' : 'Saída'}
                   </span>
                   <strong className={item.type === 'INCOME' ? 'positive' : 'negative'}>
@@ -251,7 +252,10 @@ export function TransactionsPage() {
                 {Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => (
                   <Button
                     key={number}
-                    variant={number === currentPage ? 'primary' : 'secondary'}
+                    variant="secondary"
+                    className="page-button"
+                    aria-current={number === currentPage ? 'page' : undefined}
+                    aria-label={`Página ${number}`}
                     onClick={() => setPage(number)}
                   >
                     {number}

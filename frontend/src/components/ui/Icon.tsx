@@ -15,6 +15,8 @@ export type IconName =
   | 'trending-down'
   | 'pencil'
   | 'trash'
+  | 'circle-arrow-up'
+  | 'circle-arrow-down'
 
 const glyphs: Record<IconName, ReactNode> = {
   mail: (
@@ -106,6 +108,20 @@ const glyphs: Record<IconName, ReactNode> = {
       <path d="M3 6h18" />
       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
       <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </>
+  ),
+  'circle-arrow-up': (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <path d="m16 12-4-4-4 4" />
+      <path d="M12 16V8" />
+    </>
+  ),
+  'circle-arrow-down': (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 8v8" />
+      <path d="m8 12 4 4 4-4" />
     </>
   ),
 }

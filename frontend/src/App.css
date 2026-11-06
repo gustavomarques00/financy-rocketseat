@@ -126,9 +126,13 @@
   text-decoration: none;
 }
 
+.text-link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
 .text-link:disabled {
   cursor: not-allowed;
-  opacity: 0.7;
+  color: var(--color-gray-400);
 }
 
 .app-frame {
@@ -157,6 +161,10 @@
   font-size: 0.92rem;
   font-weight: 500;
   padding: 0.35rem 0.15rem;
+}
+
+.nav-link:hover {
+  color: var(--color-brand);
 }
 
 .nav-link.active {
@@ -337,15 +345,23 @@
   font-weight: 600;
 }
 
-.tag-green { background: var(--color-green-soft); color: var(--color-green); }
-.tag-pink { background: var(--color-pink-soft); color: var(--color-pink); }
-.tag-orange { background: var(--color-orange-soft); color: var(--color-orange); }
-.tag-yellow { background: var(--color-yellow-soft); color: var(--color-yellow); }
-.tag-purple { background: var(--color-pink-soft); color: var(--color-pink); }
-.tag-blue { background: var(--color-green-soft); color: var(--color-brand-dark); }
-.tag-red { background: var(--color-red-soft); color: var(--color-red); }
+.tag-green { background: var(--color-green-soft); color: var(--color-green-dark); }
+.tag-pink { background: var(--color-pink-soft); color: var(--color-pink-dark); }
+.tag-orange { background: var(--color-orange-soft); color: var(--color-orange-dark); }
+.tag-yellow { background: var(--color-yellow-soft); color: var(--color-yellow-dark); }
+.tag-purple { background: var(--color-purple-light); color: var(--color-purple-dark); }
+.tag-blue { background: var(--color-blue-light); color: var(--color-blue-dark); }
+.tag-red { background: var(--color-red-soft); color: var(--color-red-dark); }
 
-.positive { color: var(--color-brand); }
+.type-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.positive { color: var(--color-success); }
 .negative { color: var(--color-danger); }
 
 .btn {
@@ -362,20 +378,46 @@
   gap: 0.4rem;
 }
 
+.btn:hover:not(:disabled) {
+  text-decoration: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
 .btn:disabled {
-  opacity: 0.65;
   cursor: not-allowed;
 }
 
 .btn-primary {
   background: var(--color-brand);
-  color: #fff;
+  color: var(--color-white);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-brand-dark);
+}
+
+.btn-primary:disabled {
+  background: color-mix(in srgb, var(--color-brand) 42%, white);
+  color: var(--color-white);
 }
 
 .btn-secondary {
-  background: #fff;
+  background: var(--color-white);
   color: var(--color-ink);
-  border-color: var(--color-border);
+  border-color: var(--color-gray-300);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-gray-100);
+}
+
+.btn-secondary:disabled {
+  color: var(--color-gray-400);
+  border-color: var(--color-gray-200);
 }
 
 .btn-danger,
@@ -383,6 +425,35 @@
   background: transparent;
   color: var(--color-gray-600);
   padding-inline: 0.45rem;
+}
+
+.btn-danger {
+  color: var(--color-danger);
+}
+
+.btn-ghost:hover:not(:disabled),
+.btn-danger:hover:not(:disabled) {
+  background: var(--color-gray-100);
+}
+
+.btn-danger:disabled,
+.btn-ghost:disabled {
+  color: var(--color-gray-300);
+}
+
+.page-button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border-radius: 6px;
+  color: var(--color-gray-700);
+}
+
+.page-button[aria-current='page'],
+.page-button[aria-current='page']:hover {
+  background: var(--color-brand);
+  border-color: transparent;
+  color: var(--color-white);
 }
 
 .form-stack {
@@ -399,6 +470,15 @@
 .field-label {
   font-size: 0.82rem;
   font-weight: 600;
+}
+
+.field:focus-within .field-label {
+  color: var(--color-brand);
+}
+
+.field-invalid .field-label,
+.field-invalid:focus-within .field-label {
+  color: var(--color-danger);
 }
 
 .icon {
@@ -479,10 +559,24 @@
   color: var(--color-ink);
 }
 
+.field-control::placeholder {
+  color: var(--color-gray-400);
+}
+
+.field-control:focus {
+  outline: none;
+  border-color: var(--color-brand);
+}
+
+.field-invalid .field-control {
+  border-color: var(--color-danger);
+}
+
 .field-control:disabled,
 .field-control:read-only {
   background: var(--color-gray-100);
-  color: var(--color-gray-600);
+  color: var(--color-gray-400);
+  border-color: var(--color-gray-200);
 }
 
 .field-error {
@@ -503,7 +597,7 @@
 }
 
 .feedback-error { background: var(--color-red-soft); color: var(--color-red); }
-.feedback-success { background: var(--color-green-soft); color: var(--color-green); }
+.feedback-success { background: color-mix(in srgb, var(--color-success) 14%, white); color: var(--color-success); }
 .feedback-info { background: var(--color-gray-100); color: var(--color-gray-700); }
 
 .empty-state,
