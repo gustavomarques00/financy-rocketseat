@@ -127,3 +127,13 @@ As seis pendências funcionais foram tratadas no código. A geometria do logo e 
 | Tipografia | Inter confirmada; tamanhos, raios e sombras sem números oficiais | Tokens já comprovados foram preservados. Nenhuma escala nova foi inventada | PARTIAL |
 
 `FIGMA_PARTIAL` permanece porque a escala tipográfica não foi medida. O logo deixou de ser aproximação: o SVG oficial foi copiado sem alterar caminhos ou viewBox. Os ícones da interface passaram a usar os SVGs preenchidos exportados, também sem alterar os caminhos. A semana do calendário começa no domingo; isso foi inferido, não medido no frame. A ordem da grade de ícones de categoria segue o conjunto exportado, não uma medida do frame.
+
+## Auditoria final da PR #10
+
+O commit `5ccb2e5` documentou o logo como pendente. O commit seguinte, `7f3edc1`, é o HEAD e contém o asset. A afirmação `LOGO_ASSET_NOT_AVAILABLE` vale apenas para o snapshot anterior a esse commit.
+
+Nesta auditoria, o SHA-256 de `frontend/src/assets/logo.svg` é `3c4c3c40094f8d349c929240cd9d348703f4d264c495d9b2f1a82d64bbcb4535`, idêntico ao `Logo.svg` original ainda presente na máquina. O arquivo tem viewBox `0 0 134 32`, 11 caminhos e preenchimento `#1F6F43`.
+
+Dos 38 SVGs exportados, 36 estão no componente de ícones com o mesmo `d` e viewBox `0 0 24 24`. `chevron-up.svg` e `chevron-down.svg` não são usados pela interface. Na renderização, o preenchimento preto do exportado vira `currentColor`; os caminhos não foram redesenhados.
+
+Uma nova leitura de variáveis no arquivo `CysjIzd5ChP9zqqfXrFtz8` foi recusada pelo limite do plano Starter. O estado da escala tipográfica, dos raios e das sombras é `FIGMA_MEASUREMENT_BLOCKED`. Inter continua sendo a família confirmada pelas capturas anteriores. Nenhuma medida nova foi inventada.

@@ -66,7 +66,7 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 
 ## Pendências
 
-1. Medir a escala tipográfica. O SVG oficial do logo já foi integrado sem alterar seus caminhos. `FIGMA_PARTIAL` permanece por essa escala e pela geometria do calendário, que não foi medida no frame.
+1. Medir a escala tipográfica. A tentativa nesta auditoria retornou `FIGMA_MEASUREMENT_BLOCKED` pelo limite do plano Starter. O SVG oficial do logo já foi integrado e conferido por SHA-256. `FIGMA_PARTIAL` permanece por essa escala e pela geometria do calendário, que não foi medida no frame.
 2. Envio manual na plataforma Rocketseat. A publicação no GitHub não registra esse envio.
 
 ## Publicação
