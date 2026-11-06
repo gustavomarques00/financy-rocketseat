@@ -1,14 +1,15 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react'
-import { Button } from './Button'
+import { Icon } from './Icon'
 
 type ModalProps = {
   title: string
+  description?: string
   open: boolean
   onClose: () => void
   children: ReactNode
 }
 
-export function Modal({ title, open, onClose, children }: ModalProps) {
+export function Modal({ title, description, open, onClose, children }: ModalProps) {
   const titleId = useId()
   const dialogRef = useRef<HTMLDivElement>(null)
 
@@ -19,7 +20,8 @@ export function Modal({ title, open, onClose, children }: ModalProps) {
 
     const previouslyFocused = document.activeElement as HTMLElement | null
     const node = dialogRef.current
-    node?.querySelector<HTMLElement>('input,select,textarea,button')?.focus()
+    const field = node?.querySelector<HTMLElement>('input,select,textarea')
+    ;(field ?? node?.querySelector<HTMLElement>('button'))?.focus()
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -52,10 +54,13 @@ export function Modal({ title, open, onClose, children }: ModalProps) {
         onClick={(event) => event.stopPropagation()}
       >
         <div className="modal-header">
-          <h2 id={titleId}>{title}</h2>
-          <Button variant="ghost" aria-label="Fechar" onClick={onClose}>
-            ×
-          </Button>
+          <div>
+            <h2 id={titleId}>{title}</h2>
+            {description ? <p className="modal-description">{description}</p> : null}
+          </div>
+          <button type="button" className="icon-button modal-close" aria-label="Fechar" onClick={onClose}>
+            <Icon name="x" />
+          </button>
         </div>
         <div className="modal-body">{children}</div>
       </div>

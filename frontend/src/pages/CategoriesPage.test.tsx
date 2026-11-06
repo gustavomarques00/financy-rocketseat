@@ -74,7 +74,7 @@ describe('CategoriesPage', () => {
 
     expect(await screen.findByText(/nenhuma categoria/i)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /nova categoria/i }))
-    await user.type(screen.getByLabelText(/nome/i), 'Moradia')
+    await user.type(screen.getByLabelText(/título/i), 'Moradia')
     await user.click(screen.getByRole('button', { name: /salvar/i }))
 
     await waitFor(() => {

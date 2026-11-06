@@ -52,6 +52,7 @@ export function CategoryFormModal({
       open={open}
       onClose={onClose}
       title={category ? 'Editar categoria' : 'Nova categoria'}
+      description="Organize suas transações com categorias"
     >
       <form
         className="form-stack"
@@ -59,14 +60,16 @@ export function CategoryFormModal({
           await onSubmit(values)
         })}
       >
-        <Field label="Nome" htmlFor="category-name" error={errors.name?.message}>
-          <TextInput id="category-name" autoComplete="off" {...register('name')} />
+        <Field label="Título" htmlFor="category-name" error={errors.name?.message}>
+          <TextInput
+            id="category-name"
+            autoComplete="off"
+            placeholder="Ex. Alimentação"
+            {...register('name')}
+          />
         </Field>
         {error ? <Feedback tone="error">{error}</Feedback> : null}
         <div className="form-actions">
-          <Button variant="secondary" type="button" onClick={onClose} disabled={submitting}>
-            Cancelar
-          </Button>
           <Button type="submit" disabled={submitting}>
             {submitting ? 'Salvando…' : 'Salvar'}
           </Button>

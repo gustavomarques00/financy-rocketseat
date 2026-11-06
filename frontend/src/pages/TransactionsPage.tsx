@@ -36,7 +36,9 @@ export function TransactionsPage() {
     for (const item of transactions) {
       const date = new Date(item.date)
       const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-      labels.set(key, date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }))
+      const month = date.toLocaleDateString('pt-BR', { month: 'long' })
+      const label = `${month.charAt(0).toUpperCase()}${month.slice(1)} / ${date.getFullYear()}`
+      labels.set(key, label)
     }
     return [...labels.entries()].sort((left, right) => right[0].localeCompare(left[0]))
   }, [transactions])
@@ -95,6 +97,7 @@ export function TransactionsPage() {
             setModalOpen(true)
           }}
         >
+          <Icon name="plus" />
           Nova transação
         </Button>
       </div>
@@ -185,13 +188,31 @@ export function TransactionsPage() {
           ) : filtered.length === 0 ? (
             <EmptyState title="Nenhuma transação" description="Nenhum resultado para os filtros atuais." />
           ) : (
+            <>
+            <div className="ledger-head" aria-hidden="true">
+              <span>Descrição</span>
+              <span>Data</span>
+              <span>Categoria</span>
+              <span>Tipo</span>
+              <span>Valor</span>
+              <span>Ações</span>
+            </div>
             <ul className="data-list ledger">
               {visible.map((item) => (
                 <li key={item.id} className="data-row">
-                  <div>
+                  <div className="tx-description">
+                    <span className={`summary-icon tag tag-${categoryTone(item.category.name)}`}>
+                      <Icon name="tag" />
+                    </span>
                     <strong>{item.description}</strong>
-                    <p className="muted">{new Date(item.date).toLocaleDateString('pt-BR')}</p>
                   </div>
+                  <span className="muted">
+                    {new Date(item.date).toLocaleDateString('pt-BR', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: '2-digit',
+                    })}
+                  </span>
                   <span className={`tag tag-${categoryTone(item.category.name)}`}>{item.category.name}</span>
                   <span className={item.type === 'INCOME' ? 'type-indicator positive' : 'type-indicator negative'}>
                     <Icon name={item.type === 'INCOME' ? 'circle-arrow-up' : 'circle-arrow-down'} />
@@ -201,18 +222,6 @@ export function TransactionsPage() {
                     {item.type === 'INCOME' ? '+' : '-'} {centsToDisplay(item.amount)}
                   </strong>
                     <div className="row-actions">
-                      <Button
-                        variant="ghost"
-                        className="icon-button"
-                        aria-label="Editar"
-                        onClick={() => {
-                          setEditing(item)
-                          setFormError(null)
-                          setModalOpen(true)
-                        }}
-                      >
-                        <Icon name="pencil" />
-                      </Button>
                       <Button
                         variant="danger"
                         className="icon-button"
@@ -237,18 +246,40 @@ export function TransactionsPage() {
                       >
                         <Icon name="trash" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        className="icon-button"
+                        aria-label="Editar"
+                        onClick={() => {
+                          setEditing(item)
+                          setFormError(null)
+                          setModalOpen(true)
+                        }}
+                      >
+                        <Icon name="pencil" />
+                      </Button>
                     </div>
                 </li>
               ))}
             </ul>
+            </>
           )}
-          {filtered.length > pageSize ? (
+          {filtered.length > 0 ? (
             <div className="pager">
               <span className="muted">
-                {(currentPage - 1) * pageSize + 1} a {Math.min(currentPage * pageSize, filtered.length)} /{' '}
+                {(currentPage - 1) * pageSize + 1} a {Math.min(currentPage * pageSize, filtered.length)} |{' '}
                 {filtered.length} resultados
               </span>
               <div className="row-actions">
+                <Button
+                  variant="secondary"
+                  className="page-button"
+                  aria-label="Página anterior"
+                  disabled={currentPage === 1}
+                  onClick={() => setPage(currentPage - 1)}
+                >
+                  <Icon name="chevron-left" />
+                </Button>
                 {Array.from({ length: pageCount }, (_, index) => index + 1).map((number) => (
                   <Button
                     key={number}
@@ -261,6 +292,15 @@ export function TransactionsPage() {
                     {number}
                   </Button>
                 ))}
+                <Button
+                  variant="secondary"
+                  className="page-button"
+                  aria-label="Próxima página"
+                  disabled={currentPage === pageCount}
+                  onClick={() => setPage(currentPage + 1)}
+                >
+                  <Icon name="chevron-right" />
+                </Button>
               </div>
             </div>
           ) : null}

@@ -66,10 +66,10 @@ describe('AccountPage', () => {
     expect(await screen.findByRole('heading', { name: 'Conta Visual' })).toBeInTheDocument()
     expect(document.querySelector('.avatar-large')?.textContent).toBe('CV')
     expect(screen.getAllByText('visual.qa@example.com').length).toBeGreaterThan(0)
-    expect(screen.getByText('Nome completo')).toBeInTheDocument()
-    expect(screen.getByText(/apenas para consulta nesta versão/i)).toBeInTheDocument()
+    expect(screen.getByLabelText('Nome completo')).toHaveAttribute('readonly')
+    expect(screen.getByLabelText('E-mail')).toHaveAttribute('readonly')
+    expect(screen.getByText(/não pode ser alterado/i)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /salvar alterações/i })).not.toBeInTheDocument()
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: /sair da conta/i }))
     expect(await screen.findByText('Login page')).toBeInTheDocument()

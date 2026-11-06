@@ -22,6 +22,12 @@ export function CategoriesPage() {
   const [actionError, setActionError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
+  const topCategory = [...categories].sort((a, b) => {
+    const countA = transactions.filter((item) => item.categoryId === a.id).length
+    const countB = transactions.filter((item) => item.categoryId === b.id).length
+    return countB - countA || a.name.localeCompare(b.name, 'pt-BR')
+  })[0]
+
   async function guardRequest<T>(operation: () => Promise<T>): Promise<T | null> {
     try {
       return await operation()
@@ -48,6 +54,7 @@ export function CategoriesPage() {
             setModalOpen(true)
           }}
         >
+          <Icon name="plus" />
           Nova categoria
         </Button>
       </div>
@@ -58,27 +65,34 @@ export function CategoriesPage() {
       {success ? <Feedback tone="success">{success}</Feedback> : null}
 
       {!loading && !error ? (
-        <div className="panel">
+        <>
           <div className="summary-grid summary-grid-compact">
-            <article className="summary-card">
-              <p className="summary-value">{categories.length}</p>
-              <p className="eyebrow">Total de categorias</p>
+            <article className="summary-card stat-card">
+              <span className="summary-icon tag tag-purple">
+                <Icon name="tag" />
+              </span>
+              <div>
+                <p className="summary-value">{categories.length}</p>
+                <p className="eyebrow">Total de categorias</p>
+              </div>
             </article>
-            <article className="summary-card">
-              <p className="summary-value">{transactions.length}</p>
-              <p className="eyebrow">Total de transações</p>
+            <article className="summary-card stat-card">
+              <span className="summary-icon tag tag-blue">
+                <Icon name="arrow-up-down" />
+              </span>
+              <div>
+                <p className="summary-value">{transactions.length}</p>
+                <p className="eyebrow">Total de transações</p>
+              </div>
             </article>
-            <article className="summary-card">
-              <p className="summary-value">
-                {categories.length === 0
-                  ? '—'
-                  : [...categories].sort((a, b) => {
-                      const countA = transactions.filter((item) => item.categoryId === a.id).length
-                      const countB = transactions.filter((item) => item.categoryId === b.id).length
-                      return countB - countA || a.name.localeCompare(b.name, 'pt-BR')
-                    })[0]?.name}
-              </p>
-              <p className="eyebrow">Categoria mais utilizada</p>
+            <article className="summary-card stat-card">
+              <span className={`summary-icon tag tag-${categoryTone(topCategory?.name ?? '')}`}>
+                <Icon name="tag" />
+              </span>
+              <div>
+                <p className="summary-value">{topCategory?.name ?? '—'}</p>
+                <p className="eyebrow">Categoria mais utilizada</p>
+              </div>
             </article>
           </div>
           {categories.length === 0 ? (
@@ -93,20 +107,10 @@ export function CategoriesPage() {
                 return (
                 <li key={category.id} className="category-card">
                   <div className="category-card-top">
-                    <strong>{category.name}</strong>
+                    <span className={`summary-icon tag tag-${categoryTone(category.name)}`}>
+                      <Icon name="tag" />
+                    </span>
                     <div className="row-actions">
-                    <Button
-                      variant="ghost"
-                      className="icon-button"
-                      aria-label="Editar"
-                      onClick={() => {
-                        setEditing(category)
-                        setFormError(null)
-                        setModalOpen(true)
-                      }}
-                    >
-                      <Icon name="pencil" />
-                    </Button>
                     <Button
                       variant="danger"
                       className="icon-button"
@@ -137,18 +141,33 @@ export function CategoriesPage() {
                     >
                       <Icon name="trash" />
                     </Button>
+                    <Button
+                      variant="ghost"
+                      className="icon-button"
+                      aria-label="Editar"
+                      onClick={() => {
+                        setEditing(category)
+                        setFormError(null)
+                        setModalOpen(true)
+                      }}
+                    >
+                      <Icon name="pencil" />
+                    </Button>
                     </div>
                   </div>
+                  <strong>{category.name}</strong>
+                  <div className="category-card-meta">
                   <span className={`tag tag-${categoryTone(category.name)}`}>{category.name}</span>
                   <span className="muted">
                     {count} {count === 1 ? 'item' : 'itens'}
                   </span>
+                  </div>
                 </li>
                 )
               })}
             </ul>
           )}
-        </div>
+        </>
       ) : null}
 
       <CategoryFormModal
