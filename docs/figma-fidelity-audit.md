@@ -77,3 +77,21 @@ O SVG oficial do logo não pôde ser exportado: o visualizador anônimo bloqueia
 | Style Guide | Página `3:377`, quadro `1085:713`. Brand, cinzas principais e acentos lidos | Tokens atuais de `theme.css` | Segunda fileira de cinza, azul, roxo, escala, raios e sombras ainda sem leitura nítida | P2 | Nenhuma cor nova inventada. Tokens já lidos permanecem | PARTIAL |
 
 Não há divergência estrutural P0 nas seis telas. Adaptação em 390 px continua decisão de implementação: os frames lidos são desktop.
+
+## Execução 14 — capturas do Style Guide
+
+O usuário forneceu cinco capturas locais do Style Guide, feitas em 6 nov 2026. Elas cobrem cores, tipografia e ícones, inputs, botões, links, paginação, tags e tipos. Não são exportações SVG. O logo permanece `LOGO_PARTIAL`: a captura mostra o símbolo de dois elos e a palavra FINANCY, mas o caminho vetorial oficial não foi exportado e não foi redesenhado.
+
+| Item | Figma Evidence | Current UI | Difference | Severity | Action | Verification |
+|---|---|---|---|---|---|---|
+| Cores | Quadro Cores com brand, cinzas até `#F8F9FA`, feedback `#EF4444` / `#19AD70` e as famílias azul, roxo, rosa, vermelho, laranja, amarelo e verde | Faltavam cinza 300/200, success e os pares azul/roxo | Tags azul e roxa reutilizavam outras cores | P1 | Tokens ausentes entraram em `theme.css`. Tags usam o par claro/escuro da captura | MATCH |
+| Tipografia | Inter, sem escala de tamanho | Inter via Google Fonts, pesos 400–700 | Escala, raios e sombras continuam sem medida oficial | P2 | Nenhuma escala inventada | PARTIAL |
+| Ícones | Grade Lucide, sem nomes individuais | SVGs inline no traço Lucide | O conjunto da interface é um subconjunto. `lucide-react` não foi instalado | P2 | Ícones de Entrada e Saída adicionados | PARTIAL |
+| Inputs | Empty, active, filled, error, disabled e select | Borda única, erro só no texto | Foco, erro e desabilitado sem a cor do guia | P1 | Foco verde, erro vermelho e disabled real no CSS | PARTIAL |
+| Botões | Solid, outline, hover, disabled e icon button | Sem hover distinto | Hover, disabled e paginação quadrada | P1 | Estados aplicados nos botões existentes | PARTIAL |
+| Links e paginação | Link verde com sublinhado no hover; página ativa verde | Link sem hover; página ativa era botão grande | Controles locais já existiam | P2 | Hover no link e botão de página com `aria-current` | PARTIAL |
+| Tags e tipos | Oito tags semânticas; Entrada e Saída com seta circular | Tipo era uma tag colorida | Indicador sem o ícone do guia | P1 | Entrada e Saída usam seta circular e as cores success/danger | PARTIAL |
+| Logo | Símbolo de dois elos e FINANCY | Círculo com ponto | Geometria diferente | P1 | Reconstrução mantida. Sem SVG oficial | PARTIAL |
+| Overlays de Gestão | Sem captura legível nesta execução | Modais funcionais | Texto interno ainda não comparado | P2 | Formulários preservados. Sem calendário customizado | NOT_VERIFIED |
+
+`FIGMA_PARTIAL` permanece por causa do logo e dos overlays de Gestão.

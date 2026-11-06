@@ -6,6 +6,8 @@
 
 **Status geral da auditoria:** `FIGMA_PARTIAL`
 
+Revisão da Execução 14: cinco capturas locais do Style Guide confirmaram a paleta, Inter e a referência a Lucide. Tokens ausentes, estados de input e botão, tags semânticas e os indicadores Entrada/Saída foram aplicados. O símbolo oficial do logo não foi exportado. Ver `docs/figma-fidelity-audit.md`.
+
 Revisão da Execução 13: a cópia `CysjIzd5ChP9zqqfXrFtz8` foi aberta no visualizador. As seis telas desktop foram comparadas. Ícones de formulário, cartões e ações, além do filtro local de período, foram aproximados. Uma nova leitura do quadro `1085:713` confirmou brand, cinzas principais e acentos já usados no tema. O SVG oficial do logo, a escala tipográfica e o texto dos overlays de Gestão continuam sem leitura suficiente. Ver `docs/figma-fidelity-audit.md`.
 
 Revisão da Etapa 7: o arquivo `IR3TQC9ofQKZ2km01tq8EB` foi aberto no editor. As seis telas oficiais e o quadro de cores `1085:713` foram comparados. A estrutura passou a usar a navegação superior, Inter e as cores lidas. O detalhe interno dos overlays de Gestão e a escala tipográfica completa continuam sem leitura número a número. Na Etapa 9 a API continuou limitada; a página de conta passou a ser somente consulta.
