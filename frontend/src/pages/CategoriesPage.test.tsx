@@ -74,11 +74,16 @@ describe('CategoriesPage', () => {
 
     expect(await screen.findByText(/nenhuma categoria/i)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /nova categoria/i }))
-    await user.type(screen.getByLabelText(/nome/i), 'Moradia')
+    await user.type(screen.getByLabelText(/título/i), 'Moradia')
     await user.click(screen.getByRole('button', { name: /salvar/i }))
 
     await waitFor(() => {
-      expect(apiMocks.createCategory).toHaveBeenCalledWith('token-abc', { name: 'Moradia' })
+      expect(apiMocks.createCategory).toHaveBeenCalledWith('token-abc', {
+        name: 'Moradia',
+        description: null,
+        icon: 'tag',
+        color: 'green',
+      })
     })
     expect(await screen.findAllByText('Moradia')).not.toHaveLength(0)
   })

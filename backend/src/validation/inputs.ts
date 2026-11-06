@@ -1,4 +1,9 @@
 import { z } from 'zod'
+import {
+  CATEGORY_COLORS,
+  CATEGORY_DESCRIPTION_MAX,
+  CATEGORY_ICONS,
+} from '../domain/categoryAppearance.js'
 
 const NAME_MAX = 80
 const EMAIL_MAX = 254
@@ -40,12 +45,38 @@ export const categoryNameSchema = z
   .min(1, 'Category name is required.')
   .max(CATEGORY_NAME_MAX, `Category name must be at most ${CATEGORY_NAME_MAX} characters.`)
 
+export const categoryDescriptionSchema = z
+  .string()
+  .trim()
+  .max(
+    CATEGORY_DESCRIPTION_MAX,
+    `Category description must be at most ${CATEGORY_DESCRIPTION_MAX} characters.`,
+  )
+
+export const categoryIconSchema = z.enum(CATEGORY_ICONS, {
+  error: 'Category icon is not allowed.',
+})
+
+export const categoryColorSchema = z.enum(CATEGORY_COLORS, {
+  error: 'Category color is not allowed.',
+})
+
 export const createCategoryInputSchema = z.object({
   name: categoryNameSchema,
+  description: categoryDescriptionSchema.nullable().optional(),
+  icon: categoryIconSchema.optional(),
+  color: categoryColorSchema.optional(),
 })
 
 export const updateCategoryInputSchema = z.object({
   name: categoryNameSchema,
+  description: categoryDescriptionSchema.nullable().optional(),
+  icon: categoryIconSchema.optional(),
+  color: categoryColorSchema.optional(),
+})
+
+export const updateMeInputSchema = z.object({
+  name: registerInputSchema.shape.name,
 })
 
 export const transactionTypeSchema = z.enum(['INCOME', 'EXPENSE'])

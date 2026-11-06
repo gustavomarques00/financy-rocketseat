@@ -46,13 +46,49 @@ export function centsToInputValue(cents: number): string {
   return (cents / 100).toFixed(2).replace('.', ',')
 }
 
+export type MoneyMovement = {
+  amount: number
+  type: 'INCOME' | 'EXPENSE'
+  date?: string
+}
+
+/**
+ * Financial dates are stored at 12:00 UTC so the calendar day selected by the
+ * user is the UTC year and month. The reference month is the viewer's local
+ * month, which is the current month when no reference is passed.
+ */
+export function isInReferenceMonth(isoDate: string, reference: Date): boolean {
+  const date = new Date(isoDate)
+  if (Number.isNaN(date.getTime())) {
+    return false
+  }
+
+  return (
+    date.getUTCFullYear() === reference.getFullYear() &&
+    date.getUTCMonth() === reference.getMonth()
+  )
+}
+
 export function summarizeTransactions(
-  transactions: Array<{ amount: number; type: 'INCOME' | 'EXPENSE' }>,
+  transactions: MoneyMovement[],
+  reference: Date = new Date(),
 ): { incomeCents: number; expenseCents: number; balanceCents: number } {
+  let totalIncomeCents = 0
+  let totalExpenseCents = 0
   let incomeCents = 0
   let expenseCents = 0
 
   for (const item of transactions) {
+    if (item.type === 'INCOME') {
+      totalIncomeCents += item.amount
+    } else {
+      totalExpenseCents += item.amount
+    }
+
+    if (!item.date || !isInReferenceMonth(item.date, reference)) {
+      continue
+    }
+
     if (item.type === 'INCOME') {
       incomeCents += item.amount
     } else {
@@ -63,6 +99,6 @@ export function summarizeTransactions(
   return {
     incomeCents,
     expenseCents,
-    balanceCents: incomeCents - expenseCents,
+    balanceCents: totalIncomeCents - totalExpenseCents,
   }
 }

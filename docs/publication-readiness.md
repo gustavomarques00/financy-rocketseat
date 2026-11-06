@@ -10,8 +10,8 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 - Baseline funcional validado: `be4e0790eee0c397edc4d67518c6cf6b99b7c500`
 - Atualização documental pública posteriormente confirmada: `52505461829e39fb655a4555d86561ee24f75222`
 - Os commits entre esse baseline e o marco documental alteram somente Markdown. As suítes não foram reexecutadas nesses commits.
-- Figma: `FIGMA_PARTIAL` (estrutura das seis telas; logo oficial, escala tipográfica e texto dos overlays de Gestão ainda incompletos)
-- Conta: nome e e-mail somente para consulta; sem mutation de perfil
+- Figma: `FIGMA_PARTIAL`. Categorias, nome do perfil, totais mensais e calendário foram implementados. O logo oficial está em `frontend/src/assets/logo.svg`. A escala tipográfica não foi medida.
+- Conta: o nome é editado por `updateMe`; o e-mail permanece somente leitura.
 - Submissão acadêmica: não realizada
 
 ## Requisitos obrigatórios
@@ -23,9 +23,27 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 | CRUD e isolamento por usuário | PASS | Testes GraphQL e Playwright |
 | Frontend React, TypeScript, Vite, GraphQL | PASS | Sem Next.js |
 | Dashboard, categorias, transações, modais | PASS | Playwright desktop e mobile |
-| Referência visual ao Figma | PARTIAL | Estrutura comparada; detalhes do Style Guide e dos overlays ainda incompletos |
+| Referência visual ao Figma | PARTIAL | Seis telas comparadas na cópia compartilhada; Style Guide e overlays de Gestão ainda incompletos |
 | `.env.example` em backend e frontend | PASS | Sem valores reais |
 | README reproduzível | PASS | Instalação, migration, testes e E2E |
+
+## Testes reexecutados na Execução 16
+
+| Gate | Resultado |
+|------|-----------|
+| Backend typecheck, `npm test`, build | PASS — 28 testes, incluindo migration com categoria antiga |
+| Frontend typecheck, lint, `npm test`, build | PASS — 18 testes |
+| Playwright desktop e mobile | PASS — 6, com categoria completa, calendário, totais de meses distintos e edição do nome |
+| Banco | SQLite temporário do E2E e do teste de migration. O banco persistente de desenvolvimento não foi usado |
+
+## Testes reexecutados na Execução 13
+
+| Gate | Resultado |
+|------|-----------|
+| Backend typecheck, `npm test`, build | PASS — 24 testes |
+| Frontend typecheck, lint, `npm test`, build | PASS — 15 testes |
+| Playwright desktop e mobile | PASS — 6 |
+| QA visual local | SQLite temporário em `%TEMP%\financy-visual-13`; telas e os dois modais abertos em 1280×800; transações em 390×844 sem overflow horizontal |
 
 ## Testes reexecutados na Etapa 9
 
@@ -48,7 +66,7 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 
 ## Pendências
 
-1. Leitura restante do Style Guide, do SVG oficial e dos overlays de Gestão, se a API do Figma voltar a responder. Isso mantém `FIGMA_PARTIAL`.
+1. Medir a escala tipográfica. A tentativa nesta auditoria retornou `FIGMA_MEASUREMENT_BLOCKED` pelo limite do plano Starter. O SVG oficial do logo já foi integrado e conferido por SHA-256. `FIGMA_PARTIAL` permanece por essa escala e pela geometria do calendário, que não foi medida no frame.
 2. Envio manual na plataforma Rocketseat. A publicação no GitHub não registra esse envio.
 
 ## Publicação

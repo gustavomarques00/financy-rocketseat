@@ -76,12 +76,16 @@ Visual alinhado ao preview Community + tema existente; fidelidade pixel-perfect 
 | Model | Papel |
 |-------|--------|
 | `User` | Conta; e-mail único; `passwordHash` |
-| `Category` | Categorias por usuário (`userId`, nome único por usuário) |
+| `Category` | Categorias por usuário (`userId`, nome único por usuário). `description` opcional, `icon` e `color` com padrão `tag` e `green` |
 | `Transaction` | Transações por usuário; `amount` em centavos (`Int`); tipo `INCOME` \| `EXPENSE` |
 
 - Remoção de usuário cascateia categorias e transações.
 - Remoção de categoria com transações vinculadas é **bloqueada** (`onDelete: Restrict` + regra de domínio `CATEGORY_IN_USE`).
 - SQLite local; PostgreSQL permanece opção futura do enunciado.
+- A migration `20261106172000_category_appearance` adiciona os campos novos sem alterar a migration inicial. Categorias já existentes preservam id, nome, dono e transações; descrição fica nula e a aparência recebe os padrões.
+- Ícone e cor aceitos são identificadores de allowlist, validados no servidor. SVG, caminho de arquivo e CSS livre são rejeitados. A descrição tem no máximo 160 caracteres.
+- `updateMe` atualiza apenas o nome do usuário identificado pelo JWT. Não recebe `userId`, não altera e-mail e não altera senha. Essa mutation aproxima o botão do frame de perfil; o enunciado acadêmico consultado não a lista como requisito separado.
+- O dashboard calcula saldo, receitas do mês e despesas do mês no cliente, sobre a lista completa já filtrada por dono. O saldo usa todo o histórico. Os cartões mensais usam a data financeira da transação e o mês local corrente. A data é gravada às 12:00 UTC para o dia escolhido não retroceder no fuso UTC−3.
 
 ### Política monetária
 
@@ -150,8 +154,9 @@ query Health { health { status service timestamp database } }
 
 ```graphql
 query Me { me { id name email createdAt updatedAt } }
+mutation UpdateMe($input: UpdateMeInput!) { updateMe(input: $input) { id name email } }
 
-query Categories { categories { id name createdAt updatedAt } }
+query Categories { categories { id name description icon color createdAt updatedAt } }
 mutation CreateCategory($input: CreateCategoryInput!) {
   createCategory(input: $input) { id name }
 }

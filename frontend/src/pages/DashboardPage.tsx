@@ -1,11 +1,34 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/useAuth'
+import {
+  TransactionFormModal,
+  type TransactionFormPayload,
+} from '../components/transactions/TransactionFormModal'
 import { EmptyState, Feedback, LoadingBlock } from '../components/ui/Feedback'
+import { Icon } from '../components/ui/Icon'
 import { useFinanceData } from '../hooks/useFinanceData'
-import { categoryTone } from '../lib/categoryTone'
+import { api } from '../lib/graphql/client'
+import { getErrorMessage } from '../lib/graphql/errors'
+import { categoryAppearance } from '../lib/categoryAppearance'
 import { centsToDisplay, summarizeTransactions } from '../lib/money'
 
+function shortDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+  })
+}
+
 export function DashboardPage() {
-  const { loading, error, categories, transactions } = useFinanceData()
+  const { token, handleAuthFailure } = useAuth()
+  const navigate = useNavigate()
+  const { loading, error, categories, transactions, refresh } = useFinanceData()
+  const [modalOpen, setModalOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const summary = summarizeTransactions(transactions)
   const recent = transactions.slice(0, 5)
   const categoryStats = categories
@@ -22,20 +45,30 @@ export function DashboardPage() {
       <h1 className="sr-only">Dashboard</h1>
       {loading ? <LoadingBlock /> : null}
       {error ? <Feedback tone="error">{error}</Feedback> : null}
+      {success ? <Feedback tone="success">{success}</Feedback> : null}
 
       {!loading && !error ? (
         <>
           <div className="summary-grid">
             <article className="summary-card">
-              <p className="eyebrow">Saldo total</p>
+              <p className="summary-label">
+                <span className="summary-icon tag tag-purple"><Icon name="wallet" /></span>
+                <span className="eyebrow">Saldo total</span>
+              </p>
               <p className="summary-value">{centsToDisplay(summary.balanceCents)}</p>
             </article>
             <article className="summary-card">
-              <p className="eyebrow">Receitas do mês</p>
+              <p className="summary-label">
+                <span className="summary-icon tag tag-green"><Icon name="circle-arrow-up" /></span>
+                <span className="eyebrow">Receitas do mês</span>
+              </p>
               <p className="summary-value">{centsToDisplay(summary.incomeCents)}</p>
             </article>
             <article className="summary-card">
-              <p className="eyebrow">Despesas do mês</p>
+              <p className="summary-label">
+                <span className="summary-icon tag tag-red"><Icon name="circle-arrow-down" /></span>
+                <span className="eyebrow">Despesas do mês</span>
+              </p>
               <p className="summary-value">{centsToDisplay(summary.expenseCents)}</p>
             </article>
           </div>
@@ -44,7 +77,10 @@ export function DashboardPage() {
             <div className="panel">
               <div className="panel-header">
                 <h2>Transações recentes</h2>
-                <Link to="/transactions">Ver todas</Link>
+                <Link to="/transactions">
+                  Ver todas
+                  <Icon name="chevron-right" />
+                </Link>
               </div>
               {recent.length === 0 ? (
                 <EmptyState
@@ -53,35 +89,53 @@ export function DashboardPage() {
                 />
               ) : (
                 <ul className="data-list">
-                  {recent.map((item) => (
+                  {recent.map((item) => {
+                    const appearance = categoryAppearance(item.category)
+                    return (
                     <li key={item.id} className="data-row">
-                      <div>
-                        <strong>{item.description}</strong>
-                        <p className="muted">
-                          {new Date(item.date).toLocaleDateString('pt-BR')}
-                        </p>
+                      <div className="tx-description">
+                        <span className={`summary-icon tag tag-${appearance.color}`}>
+                          <Icon name={appearance.icon} />
+                        </span>
+                        <div>
+                          <strong>{item.description}</strong>
+                          <p className="muted">{shortDate(item.date)}</p>
+                        </div>
                       </div>
                       <div className="row-meta">
-                        <span className={`tag tag-${categoryTone(item.category.name)}`}>
+                        <span className={`tag tag-${appearance.color}`}>
                           {item.category.name}
                         </span>
-                        <strong className={item.type === 'INCOME' ? 'positive' : 'negative'}>
+                        <strong className={item.type === 'INCOME' ? 'type-indicator positive' : 'type-indicator negative'}>
                           {item.type === 'INCOME' ? '+' : '-'} {centsToDisplay(item.amount)}
+                          <Icon name={item.type === 'INCOME' ? 'circle-arrow-up' : 'circle-arrow-down'} />
                         </strong>
                       </div>
                     </li>
-                  ))}
+                    )
+                  })}
                 </ul>
               )}
-              <Link className="text-link panel-footer-link" to="/transactions">
-                + Nova transação
-              </Link>
+              <button
+                type="button"
+                className="text-link panel-footer-link"
+                onClick={() => {
+                  setFormError(null)
+                  setModalOpen(true)
+                }}
+              >
+                <Icon name="plus" />
+                Nova transação
+              </button>
             </div>
 
             <div className="panel">
               <div className="panel-header">
                 <h2>Categorias</h2>
-                <Link to="/categories">Gerenciar</Link>
+                <Link to="/categories">
+                  Gerenciar
+                  <Icon name="chevron-right" />
+                </Link>
               </div>
               {categoryStats.length === 0 ? (
                 <EmptyState
@@ -92,7 +146,7 @@ export function DashboardPage() {
                 <ul className="data-list">
                   {categoryStats.map((category) => (
                     <li key={category.id} className="data-row">
-                      <span className={`tag tag-${categoryTone(category.name)}`}>{category.name}</span>
+                      <span className={`tag tag-${categoryAppearance(category).color}`}>{category.name}</span>
                       <span className="muted">
                         {category.count} {category.count === 1 ? 'item' : 'itens'}
                       </span>
@@ -105,6 +159,40 @@ export function DashboardPage() {
           </div>
         </>
       ) : null}
+
+      <TransactionFormModal
+        open={modalOpen}
+        categories={categories}
+        submitting={submitting}
+        error={formError}
+        onClose={() => {
+          if (!submitting) {
+            setModalOpen(false)
+          }
+        }}
+        onSubmit={async (values: TransactionFormPayload) => {
+          if (!token) {
+            return
+          }
+          setSubmitting(true)
+          setFormError(null)
+          setSuccess(null)
+          try {
+            await api.createTransaction(token, values)
+            setSuccess('Transação criada.')
+            setModalOpen(false)
+            await refresh()
+          } catch (err) {
+            if (handleAuthFailure(err)) {
+              navigate('/login', { replace: true })
+              return
+            }
+            setFormError(getErrorMessage(err))
+          } finally {
+            setSubmitting(false)
+          }
+        }}
+      />
     </section>
   )
 }

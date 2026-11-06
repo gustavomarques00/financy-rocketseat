@@ -30,17 +30,40 @@ describe('money helpers', () => {
     expect(centsToInputValue(150)).toBe('1,50')
   })
 
-  it('summarizes income expense and balance with integer math', () => {
+  it('keeps the all-time balance and limits monthly totals to the reference month', () => {
+    const reference = new Date(2026, 10, 15)
     expect(
-      summarizeTransactions([
-        { amount: 10000, type: 'INCOME' },
-        { amount: 2500, type: 'EXPENSE' },
-        { amount: 500, type: 'EXPENSE' },
-      ]),
+      summarizeTransactions(
+        [
+          { amount: 100000, type: 'INCOME', date: '2026-11-01T12:00:00.000Z' },
+          { amount: 25000, type: 'EXPENSE', date: '2026-11-30T12:00:00.000Z' },
+          { amount: 50000, type: 'INCOME', date: '2026-10-31T12:00:00.000Z' },
+          { amount: 8000, type: 'EXPENSE', date: '2025-11-15T12:00:00.000Z' },
+          { amount: 12000, type: 'INCOME', date: '2026-12-01T12:00:00.000Z' },
+        ],
+        reference,
+      ),
     ).toEqual({
-      incomeCents: 10000,
-      expenseCents: 3000,
-      balanceCents: 7000,
+      incomeCents: 100000,
+      expenseCents: 25000,
+      balanceCents: 129000,
     })
+  })
+
+  it('returns zero monthly totals when the month has no transactions', () => {
+    expect(
+      summarizeTransactions(
+        [{ amount: 4000, type: 'EXPENSE', date: '2024-01-15T12:00:00.000Z' }],
+        new Date(2026, 10, 1),
+      ),
+    ).toEqual({
+      incomeCents: 0,
+      expenseCents: 0,
+      balanceCents: -4000,
+    })
+  })
+
+  it('formats a negative balance without changing the integer cents', () => {
+    expect(centsToDisplay(-15000)).toMatch(/-?\s*R\$\s*150,00/)
   })
 })

@@ -9,6 +9,7 @@ export type AuthContextValue = {
   token: string | null
   login: (input: { email: string; password: string }) => Promise<void>
   register: (input: { name: string; email: string; password: string }) => Promise<void>
+  updateProfile: (name: string) => Promise<void>
   logout: () => void
   handleAuthFailure: (error: unknown) => boolean
 }

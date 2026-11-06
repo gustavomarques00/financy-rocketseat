@@ -1,4 +1,8 @@
 import { Prisma, type Category, type PrismaClient } from '@prisma/client'
+import {
+  DEFAULT_CATEGORY_COLOR,
+  DEFAULT_CATEGORY_ICON,
+} from '../domain/categoryAppearance.js'
 import { AppError } from '../errors.js'
 import {
   createCategoryInputSchema,
@@ -29,6 +33,11 @@ export async function getCategory(
   return category
 }
 
+function normalizeDescription(value: string | null | undefined): string | null {
+  const trimmed = value?.trim() ?? ''
+  return trimmed.length === 0 ? null : trimmed
+}
+
 export async function createCategory(
   prisma: PrismaClient,
   userId: string,
@@ -43,6 +52,9 @@ export async function createCategory(
     return await prisma.category.create({
       data: {
         name: parsed.data.name,
+        description: normalizeDescription(parsed.data.description),
+        icon: parsed.data.icon ?? DEFAULT_CATEGORY_ICON,
+        color: parsed.data.color ?? DEFAULT_CATEGORY_COLOR,
         userId,
       },
     })
@@ -77,7 +89,14 @@ export async function updateCategory(
   try {
     return await prisma.category.update({
       where: { id: existing.id },
-      data: { name: parsed.data.name },
+      data: {
+        name: parsed.data.name,
+        ...(parsed.data.description !== undefined
+          ? { description: normalizeDescription(parsed.data.description) }
+          : {}),
+        ...(parsed.data.icon !== undefined ? { icon: parsed.data.icon } : {}),
+        ...(parsed.data.color !== undefined ? { color: parsed.data.color } : {}),
+      },
     })
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {

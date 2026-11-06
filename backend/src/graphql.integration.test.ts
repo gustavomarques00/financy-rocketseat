@@ -412,6 +412,198 @@ describe('GraphQL backend core', () => {
 
       expect(response.errors?.[0]?.extensions?.code).toBe('CATEGORY_IN_USE')
     })
+
+    it('persists description, icon and color and rejects invalid appearance', async () => {
+      const created = await graphqlRequest<{
+        createCategory?: {
+          id: string
+          description: string | null
+          icon: string
+          color: string
+        }
+      }>(
+        app.url,
+        /* GraphQL */ `
+          mutation ($input: CreateCategoryInput!) {
+            createCategory(input: $input) {
+              id
+              description
+              icon
+              color
+            }
+          }
+        `,
+        {
+          input: {
+            name: 'Appearance',
+            description: '  Contas da casa  ',
+            icon: 'house',
+            color: 'blue',
+          },
+        },
+        userAToken,
+      )
+
+      expect(created.errors).toBeUndefined()
+      expect(created.data?.createCategory).toMatchObject({
+        description: 'Contas da casa',
+        icon: 'house',
+        color: 'blue',
+      })
+
+      const updated = await graphqlRequest<{
+        updateCategory?: { description: string | null; icon: string; color: string }
+      }>(
+        app.url,
+        /* GraphQL */ `
+          mutation ($id: ID!, $input: UpdateCategoryInput!) {
+            updateCategory(id: $id, input: $input) {
+              description
+              icon
+              color
+            }
+          }
+        `,
+        {
+          id: created.data!.createCategory!.id,
+          input: { name: 'Appearance', description: null, icon: 'car-front', color: 'red' },
+        },
+        userAToken,
+      )
+
+      expect(updated.errors).toBeUndefined()
+      expect(updated.data?.updateCategory).toEqual({
+        description: null,
+        icon: 'car-front',
+        color: 'red',
+      })
+
+      const invalid = await graphqlRequest(
+        app.url,
+        /* GraphQL */ `
+          mutation ($input: CreateCategoryInput!) {
+            createCategory(input: $input) {
+              id
+            }
+          }
+        `,
+        { input: { name: 'Bad appearance', icon: '<svg>', color: 'rgb(0,0,0)' } },
+        userAToken,
+      )
+
+      expect(invalid.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT')
+
+      const omitted = await graphqlRequest<{
+        createCategory?: { description: string | null; icon: string; color: string }
+      }>(
+        app.url,
+        /* GraphQL */ `
+          mutation ($input: CreateCategoryInput!) {
+            createCategory(input: $input) {
+              description
+              icon
+              color
+            }
+          }
+        `,
+        { input: { name: 'Defaults only' } },
+        userAToken,
+      )
+
+      expect(omitted.errors).toBeUndefined()
+      expect(omitted.data?.createCategory).toMatchObject({
+        description: null,
+        icon: 'tag',
+        color: 'green',
+      })
+    })
+  })
+
+  describe('profile name', () => {
+    it('updates only the authenticated user name', async () => {
+      const updated = await graphqlRequest<{
+        updateMe?: { id: string; name: string; email: string }
+      }>(
+        app.url,
+        /* GraphQL */ `
+          mutation ($input: UpdateMeInput!) {
+            updateMe(input: $input) {
+              id
+              name
+              email
+            }
+          }
+        `,
+        { input: { name: 'User A renamed' } },
+        userAToken,
+      )
+
+      expect(updated.errors).toBeUndefined()
+      expect(updated.data?.updateMe).toMatchObject({
+        id: userAId,
+        name: 'User A renamed',
+      })
+      expect(updated.data?.updateMe?.email).toContain('@example.com')
+
+      const me = await graphqlRequest<{ me?: { name: string; email: string } }>(
+        app.url,
+        /* GraphQL */ `
+          query {
+            me {
+              name
+              email
+            }
+          }
+        `,
+        undefined,
+        userAToken,
+      )
+      expect(me.data?.me?.name).toBe('User A renamed')
+      expect(me.data?.me?.email).toBe(updated.data?.updateMe?.email)
+
+      const other = await graphqlRequest<{ me?: { name: string } }>(
+        app.url,
+        /* GraphQL */ `
+          query {
+            me {
+              name
+            }
+          }
+        `,
+        undefined,
+        userBToken,
+      )
+      expect(other.data?.me?.name).not.toBe('User A renamed')
+    })
+
+    it('rejects anonymous and invalid profile updates', async () => {
+      const anonymous = await graphqlRequest(
+        app.url,
+        /* GraphQL */ `
+          mutation ($input: UpdateMeInput!) {
+            updateMe(input: $input) {
+              id
+            }
+          }
+        `,
+        { input: { name: 'Intruder' } },
+      )
+      expect(anonymous.errors?.[0]?.extensions?.code).toBe('UNAUTHENTICATED')
+
+      const invalid = await graphqlRequest(
+        app.url,
+        /* GraphQL */ `
+          mutation ($input: UpdateMeInput!) {
+            updateMe(input: $input) {
+              id
+            }
+          }
+        `,
+        { input: { name: 'A' } },
+        userAToken,
+      )
+      expect(invalid.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT')
+    })
   })
 
   describe('transactions', () => {

@@ -1,12 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { centsToInputValue, parseMoneyInputToCents } from '../../lib/money'
 import type { Category, Transaction } from '../../lib/graphql/types'
 import { Button } from '../ui/Button'
 import { Feedback } from '../ui/Feedback'
+import { DateField } from '../ui/DateField'
 import { Field, TextInput, TextSelect } from '../ui/Field'
+import { Icon } from '../ui/Icon'
 import { Modal } from '../ui/Modal'
 
 const schema = z.object({
@@ -47,7 +49,16 @@ function toDateInputValue(iso: string): string {
   if (Number.isNaN(date.getTime())) {
     return ''
   }
-  return date.toISOString().slice(0, 10)
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  return `${date.getUTCFullYear()}-${month}-${day}`
+}
+
+function todayInputValue(): string {
+  const today = new Date()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${today.getFullYear()}-${month}-${day}`
 }
 
 export function TransactionFormModal({
@@ -63,6 +74,7 @@ export function TransactionFormModal({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -70,23 +82,36 @@ export function TransactionFormModal({
       description: '',
       amount: '',
       type: 'EXPENSE',
-      date: new Date().toISOString().slice(0, 10),
+      date: todayInputValue(),
       categoryId: '',
     },
   })
 
   useEffect(() => {
+    const empty = {
+      description: '',
+      amount: '',
+      type: 'EXPENSE' as const,
+      date: todayInputValue(),
+      categoryId: '',
+    }
+
     if (!open) {
+      reset(empty)
       return
     }
 
-    reset({
-      description: transaction?.description ?? '',
-      amount: transaction ? centsToInputValue(transaction.amount) : '',
-      type: transaction?.type ?? 'EXPENSE',
-      date: transaction ? toDateInputValue(transaction.date) : new Date().toISOString().slice(0, 10),
-      categoryId: transaction?.categoryId ?? categories[0]?.id ?? '',
-    })
+    reset(
+      transaction
+        ? {
+            description: transaction.description,
+            amount: centsToInputValue(transaction.amount),
+            type: transaction.type,
+            date: toDateInputValue(transaction.date),
+            categoryId: transaction.categoryId,
+          }
+        : empty,
+    )
   }, [open, transaction, categories, reset])
 
   return (
@@ -94,6 +119,7 @@ export function TransactionFormModal({
       open={open}
       onClose={onClose}
       title={transaction ? 'Editar transação' : 'Nova transação'}
+      description={transaction ? 'Atualize os dados desta transação' : 'Registre sua despesa ou receita'}
     >
       <form
         className="form-stack"
@@ -112,21 +138,42 @@ export function TransactionFormModal({
           })
         })}
       >
+        <div className="segmented" role="radiogroup" aria-label="Tipo">
+          <label className="segment segment-expense">
+            <input type="radio" value="EXPENSE" {...register('type')} />
+            <Icon name="circle-arrow-down" />
+            Despesa
+          </label>
+          <label className="segment segment-income">
+            <input type="radio" value="INCOME" {...register('type')} />
+            <Icon name="circle-arrow-up" />
+            Receita
+          </label>
+        </div>
         <Field label="Descrição" htmlFor="tx-description" error={errors.description?.message}>
-          <TextInput id="tx-description" {...register('description')} />
+          <TextInput
+            id="tx-description"
+            placeholder="Ex. Algo no restaurante"
+            {...register('description')}
+          />
         </Field>
-        <Field label="Valor (R$)" htmlFor="tx-amount" error={errors.amount?.message}>
-          <TextInput id="tx-amount" inputMode="decimal" placeholder="0,00" {...register('amount')} />
-        </Field>
-        <Field label="Tipo" htmlFor="tx-type" error={errors.type?.message}>
-          <TextSelect id="tx-type" {...register('type')}>
-            <option value="INCOME">Receita</option>
-            <option value="EXPENSE">Despesa</option>
-          </TextSelect>
-        </Field>
-        <Field label="Data" htmlFor="tx-date" error={errors.date?.message}>
-          <TextInput id="tx-date" type="date" {...register('date')} />
-        </Field>
+        <div className="form-row">
+          <Field label="Data" htmlFor="tx-date" error={errors.date?.message}>
+            <Controller
+              control={control}
+              name="date"
+              render={({ field }) => (
+                <DateField id="tx-date" value={field.value} onChange={field.onChange} />
+              )}
+            />
+          </Field>
+          <Field label="Valor" htmlFor="tx-amount" error={errors.amount?.message}>
+            <span className="input-shell has-prefix">
+              <span className="input-prefix">R$</span>
+              <TextInput id="tx-amount" inputMode="decimal" placeholder="0,00" {...register('amount')} />
+            </span>
+          </Field>
+        </div>
         <Field label="Categoria" htmlFor="tx-category" error={errors.categoryId?.message}>
           <TextSelect id="tx-category" {...register('categoryId')}>
             <option value="">Selecione</option>
@@ -142,9 +189,6 @@ export function TransactionFormModal({
         ) : null}
         {error ? <Feedback tone="error">{error}</Feedback> : null}
         <div className="form-actions">
-          <Button variant="secondary" type="button" onClick={onClose} disabled={submitting}>
-            Cancelar
-          </Button>
           <Button type="submit" disabled={submitting || categories.length === 0}>
             {submitting ? 'Salvando…' : 'Salvar'}
           </Button>

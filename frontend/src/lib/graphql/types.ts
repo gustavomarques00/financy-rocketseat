@@ -14,6 +14,9 @@ export type AuthPayload = {
 export type Category = {
   id: string
   name: string
+  description: string | null
+  icon: string
+  color: string
   createdAt: string
   updatedAt: string
 }
@@ -30,6 +33,8 @@ export type Transaction = {
   category: {
     id: string
     name: string
+    icon: string
+    color: string
   }
   createdAt: string
   updatedAt: string

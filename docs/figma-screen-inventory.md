@@ -1,10 +1,20 @@
 # Inventário visual — Financy (Figma)
 
-**Referência oficial:** https://www.figma.com/design/IR3TQC9ofQKZ2km01tq8EB/Financy--Community-?node-id=0-1
+**Referência principal:** https://www.figma.com/design/CysjIzd5ChP9zqqfXrFtz8/Financy--Community-?node-id=3-376
+
+**Referência anterior:** https://www.figma.com/design/IR3TQC9ofQKZ2km01tq8EB/Financy--Community-?node-id=0-1
 
 **Status geral da auditoria:** `FIGMA_PARTIAL`
 
-Revisão da Etapa 7: o arquivo `IR3TQC9ofQKZ2km01tq8EB` foi aberto no editor. As seis telas oficiais e o quadro de cores `1085:713` foram comparados. A estrutura passou a usar a navegação superior, Inter e as cores lidas. O detalhe interno dos overlays de Gestão e a escala tipográfica completa continuam sem leitura número a número. Na Etapa 9 a API continuou limitada; a página de conta passou a ser somente consulta. Ver `docs/figma-fidelity-audit.md`.
+Revisão da Execução 16: descrição, ícone e cor de categoria passam a ser persistidos; o nome do perfil pode ser salvo por `updateMe`; os cartões mensais usam o mês corrente; o modal de transação tem calendário próprio. O SVG oficial do logo foi adicionado depois, em `frontend/src/assets/logo.svg`. A escala tipográfica continua sem medida. Ver `docs/figma-fidelity-audit.md`.
+
+Revisão da Execução 15: sete capturas locais das telas e dos dois modais alinharam navegação, filtros, paginação, indicadores e os formulários que o modelo persiste. Descrição, ícone e cor de categoria, o botão de salvar perfil e o SVG oficial do logo continuam fora. Ver `docs/figma-fidelity-audit.md`.
+
+Revisão da Execução 14: cinco capturas locais do Style Guide confirmaram a paleta, Inter e a referência a Lucide. Tokens ausentes, estados de input e botão, tags semânticas e os indicadores Entrada/Saída foram aplicados. O símbolo oficial do logo não foi exportado. Ver `docs/figma-fidelity-audit.md`.
+
+Revisão da Execução 13: a cópia `CysjIzd5ChP9zqqfXrFtz8` foi aberta no visualizador. As seis telas desktop foram comparadas. Ícones de formulário, cartões e ações, além do filtro local de período, foram aproximados. Uma nova leitura do quadro `1085:713` confirmou brand, cinzas principais e acentos já usados no tema. O SVG oficial do logo, a escala tipográfica e o texto dos overlays de Gestão continuam sem leitura suficiente. Ver `docs/figma-fidelity-audit.md`.
+
+Revisão da Etapa 7: o arquivo `IR3TQC9ofQKZ2km01tq8EB` foi aberto no editor. As seis telas oficiais e o quadro de cores `1085:713` foram comparados. A estrutura passou a usar a navegação superior, Inter e as cores lidas. O detalhe interno dos overlays de Gestão e a escala tipográfica completa continuam sem leitura número a número. Na Etapa 9 a API continuou limitada; a página de conta passou a ser somente consulta.
 
 Revisão da Etapa 5 (5 nov 2026):
 
@@ -21,7 +31,8 @@ Classificação desta revisão: todas as telas abaixo permanecem `PARTIAL` ou `N
 |-----------|-----------|
 | Community page (browser) | Preview público e descrição acessíveis em execuções anteriores; nesta execução a UI ficou obstruída por preferências de cookies / login |
 | MCP Figma (`create_session`) | `fileKey` numérico de Community rejeitado (`Invalid fileKey`) |
-| Frames oficiais no arquivo `IR3TQC9ofQKZ2km01tq8EB` | Login `3101:353`, Cadastro `3103:1915`, Dashboard `3103:1987`, Transações `3104:362`, Categorias `3104:2028`, Perfil `3104:2925` inspecionados na Etapa 7 |
+| Cópia compartilhada `CysjIzd5ChP9zqqfXrFtz8` | Mesmos frames relidos na Execução 13: Login `3101:353`, Cadastro `3103:1915`, Dashboard `3103:1987`, Transações `3104:362`, Categorias `3104:2028`, Perfil `3104:2925`. MCP recusou `get_metadata` por limite do plano Starter |
+| Frames no arquivo anterior `IR3TQC9ofQKZ2km01tq8EB` | Os mesmos identificadores inspecionados na Etapa 7 |
 | Style Guide e Gestão | Cores principais lidas; escala tipográfica e texto interno dos dois overlays de Gestão ainda incompletos |
 
 **Regra seguida:** não inventar nomes oficiais de frames/tokens. Implementação visual alinhada ao preview público (dashboard claro, cartões de resumo, lista de transações, identidade verde) e aos requisitos textuais.
@@ -52,4 +63,4 @@ Ainda falta reler, com zoom suficiente:
 1. Texto interno dos dois overlays da seção Gestão
 2. Escala tipográfica, raios e sombras do Style Guide
 3. SVG oficial do logotipo
-4. Ícones ilustrativos dos cards do dashboard
+4. Ícones ilustrativos dos cards do dashboard — aproximados na Execução 13 com SVG inline; o conjunto oficial de ícones não foi exportado

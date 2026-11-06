@@ -77,6 +77,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [establishSession],
   )
 
+  const updateProfile = useCallback(
+    async (name: string) => {
+      if (!token) {
+        return
+      }
+      const nextUser = await api.updateMe(token, { name })
+      setUser(nextUser)
+    },
+    [token],
+  )
+
   const logout = useCallback(() => {
     clearSession()
   }, [clearSession])
@@ -99,10 +110,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       token,
       login,
       register,
+      updateProfile,
       logout,
       handleAuthFailure,
     }),
-    [status, user, token, login, register, logout, handleAuthFailure],
+    [status, user, token, login, register, updateProfile, logout, handleAuthFailure],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

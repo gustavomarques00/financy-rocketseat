@@ -61,7 +61,7 @@ App: `http://localhost:5173`
 | `/` | autenticado | Dashboard (saldo, receitas, despesas, recentes) |
 | `/transactions` | autenticado | CRUD de transações |
 | `/categories` | autenticado | CRUD de categorias |
-| `/account` | autenticado | Consulta do nome e do e-mail + logout |
+| `/account` | autenticado | Edição do nome, e-mail somente leitura e logout |
 
 Sessão: JWT em memória + `sessionStorage` (documentado em `docs/architecture.md`). Header `Authorization: Bearer <token>`.
 
@@ -101,10 +101,10 @@ O E2E sobe backend e frontend locais em portas isoladas (`4100` e `5174`), aplic
 
 ## Limitações
 
-- A interface segue a estrutura dos frames oficiais, mas a fidelidade visual permanece `FIGMA_PARTIAL`: o SVG oficial do logo não foi exportado, e a escala tipográfica e o texto interno dos overlays de Gestão não foram lidos por completo.
-- A página de conta mostra nome e e-mail apenas para consulta. Não há edição de perfil.
+- A interface segue a estrutura dos frames oficiais, mas a fidelidade visual permanece `FIGMA_PARTIAL`. O logo usa o SVG oficial em `frontend/src/assets/logo.svg`, sem alteração de caminhos ou viewBox. A escala tipográfica ainda não foi medida.
+- A página de conta salva o nome pela mutation `updateMe`. O e-mail não é editável.
 - "Lembrar-me" não altera a duração da sessão. "Recuperar senha" não tem endpoint.
-- Os totais do dashboard agregam as transações do usuário. Não há filtro de período no servidor.
+- O saldo do dashboard considera todo o histórico do usuário. “Receitas do mês” e “Despesas do mês” consideram apenas a data financeira no mês local corrente. Não há filtro de período no servidor.
 - A sessão usa JWT em `sessionStorage`, com o risco residual descrito em `docs/architecture.md`.
 
 ## Status atual

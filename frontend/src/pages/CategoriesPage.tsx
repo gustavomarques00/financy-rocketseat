@@ -7,7 +7,8 @@ import { EmptyState, Feedback, LoadingBlock } from '../components/ui/Feedback'
 import { useFinanceData } from '../hooks/useFinanceData'
 import { api } from '../lib/graphql/client'
 import { getErrorCode, getErrorMessage } from '../lib/graphql/errors'
-import { categoryTone } from '../lib/categoryTone'
+import { categoryAppearance } from '../lib/categoryAppearance'
+import { Icon } from '../components/ui/Icon'
 import type { Category } from '../lib/graphql/types'
 
 export function CategoriesPage() {
@@ -20,6 +21,12 @@ export function CategoriesPage() {
   const [formError, setFormError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  const topCategory = [...categories].sort((a, b) => {
+    const countA = transactions.filter((item) => item.categoryId === a.id).length
+    const countB = transactions.filter((item) => item.categoryId === b.id).length
+    return countB - countA || a.name.localeCompare(b.name, 'pt-BR')
+  })[0]
 
   async function guardRequest<T>(operation: () => Promise<T>): Promise<T | null> {
     try {
@@ -47,6 +54,7 @@ export function CategoriesPage() {
             setModalOpen(true)
           }}
         >
+          <Icon name="plus" />
           Nova categoria
         </Button>
       </div>
@@ -57,27 +65,34 @@ export function CategoriesPage() {
       {success ? <Feedback tone="success">{success}</Feedback> : null}
 
       {!loading && !error ? (
-        <div className="panel">
+        <>
           <div className="summary-grid summary-grid-compact">
-            <article className="summary-card">
-              <p className="summary-value">{categories.length}</p>
-              <p className="eyebrow">Total de categorias</p>
+            <article className="summary-card stat-card">
+              <span className="summary-icon tag tag-purple">
+                <Icon name="tag" />
+              </span>
+              <div>
+                <p className="summary-value">{categories.length}</p>
+                <p className="eyebrow">Total de categorias</p>
+              </div>
             </article>
-            <article className="summary-card">
-              <p className="summary-value">{transactions.length}</p>
-              <p className="eyebrow">Total de transações</p>
+            <article className="summary-card stat-card">
+              <span className="summary-icon tag tag-blue">
+                <Icon name="arrow-up-down" />
+              </span>
+              <div>
+                <p className="summary-value">{transactions.length}</p>
+                <p className="eyebrow">Total de transações</p>
+              </div>
             </article>
-            <article className="summary-card">
-              <p className="summary-value">
-                {categories.length === 0
-                  ? '—'
-                  : [...categories].sort((a, b) => {
-                      const countA = transactions.filter((item) => item.categoryId === a.id).length
-                      const countB = transactions.filter((item) => item.categoryId === b.id).length
-                      return countB - countA || a.name.localeCompare(b.name, 'pt-BR')
-                    })[0]?.name}
-              </p>
-              <p className="eyebrow">Categoria mais utilizada</p>
+            <article className="summary-card stat-card">
+              <span className={`summary-icon tag tag-${categoryAppearance(topCategory ?? { name: '' }).color}`}>
+                <Icon name={categoryAppearance(topCategory ?? { name: '' }).icon} />
+              </span>
+              <div>
+                <p className="summary-value">{topCategory?.name ?? '—'}</p>
+                <p className="eyebrow">Categoria mais utilizada</p>
+              </div>
             </article>
           </div>
           {categories.length === 0 ? (
@@ -89,23 +104,18 @@ export function CategoriesPage() {
             <ul className="category-grid">
               {categories.map((category) => {
                 const count = transactions.filter((item) => item.categoryId === category.id).length
+                const appearance = categoryAppearance(category)
                 return (
                 <li key={category.id} className="category-card">
                   <div className="category-card-top">
-                    <strong>{category.name}</strong>
+                    <span className={`summary-icon tag tag-${appearance.color}`}>
+                      <Icon name={appearance.icon} />
+                    </span>
                     <div className="row-actions">
                     <Button
-                      variant="ghost"
-                      onClick={() => {
-                        setEditing(category)
-                        setFormError(null)
-                        setModalOpen(true)
-                      }}
-                    >
-                      Editar
-                    </Button>
-                    <Button
                       variant="danger"
+                      className="icon-button"
+                      aria-label="Excluir"
                       onClick={async () => {
                         if (!token) {
                           return
@@ -130,20 +140,36 @@ export function CategoriesPage() {
                         }
                       }}
                     >
-                      Excluir
+                      <Icon name="trash" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      className="icon-button"
+                      aria-label="Editar"
+                      onClick={() => {
+                        setEditing(category)
+                        setFormError(null)
+                        setModalOpen(true)
+                      }}
+                    >
+                      <Icon name="pencil" />
                     </Button>
                     </div>
                   </div>
-                  <span className={`tag tag-${categoryTone(category.name)}`}>{category.name}</span>
+                  <strong>{category.name}</strong>
+                  {category.description ? <p className="muted">{category.description}</p> : null}
+                  <div className="category-card-meta">
+                  <span className={`tag tag-${appearance.color}`}>{category.name}</span>
                   <span className="muted">
                     {count} {count === 1 ? 'item' : 'itens'}
                   </span>
+                  </div>
                 </li>
                 )
               })}
             </ul>
           )}
-        </div>
+        </>
       ) : null}
 
       <CategoryFormModal
