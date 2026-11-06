@@ -1,4 +1,4 @@
-import { Prisma, type Category, type PrismaClient } from '@prisma/client'
+import { Prisma, type Category, type PrismaClient } from '../lib/prisma.js'
 import {
   DEFAULT_CATEGORY_COLOR,
   DEFAULT_CATEGORY_ICON,

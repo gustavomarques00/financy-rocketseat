@@ -1,4 +1,4 @@
-import type { PrismaClient, Transaction } from '@prisma/client'
+import type { PrismaClient, Transaction } from '../lib/prisma.js'
 import { AppError } from '../errors.js'
 import {
   createTransactionInputSchema,
