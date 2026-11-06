@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { centsToInputValue, parseMoneyInputToCents } from '../../lib/money'
 import type { Category, Transaction } from '../../lib/graphql/types'
 import { Button } from '../ui/Button'
 import { Feedback } from '../ui/Feedback'
+import { DateField } from '../ui/DateField'
 import { Field, TextInput, TextSelect } from '../ui/Field'
 import { Icon } from '../ui/Icon'
 import { Modal } from '../ui/Modal'
@@ -48,7 +49,16 @@ function toDateInputValue(iso: string): string {
   if (Number.isNaN(date.getTime())) {
     return ''
   }
-  return date.toISOString().slice(0, 10)
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  return `${date.getUTCFullYear()}-${month}-${day}`
+}
+
+function todayInputValue(): string {
+  const today = new Date()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${today.getFullYear()}-${month}-${day}`
 }
 
 export function TransactionFormModal({
@@ -64,6 +74,7 @@ export function TransactionFormModal({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -71,23 +82,36 @@ export function TransactionFormModal({
       description: '',
       amount: '',
       type: 'EXPENSE',
-      date: new Date().toISOString().slice(0, 10),
+      date: todayInputValue(),
       categoryId: '',
     },
   })
 
   useEffect(() => {
+    const empty = {
+      description: '',
+      amount: '',
+      type: 'EXPENSE' as const,
+      date: todayInputValue(),
+      categoryId: '',
+    }
+
     if (!open) {
+      reset(empty)
       return
     }
 
-    reset({
-      description: transaction?.description ?? '',
-      amount: transaction ? centsToInputValue(transaction.amount) : '',
-      type: transaction?.type ?? 'EXPENSE',
-      date: transaction ? toDateInputValue(transaction.date) : new Date().toISOString().slice(0, 10),
-      categoryId: transaction?.categoryId ?? '',
-    })
+    reset(
+      transaction
+        ? {
+            description: transaction.description,
+            amount: centsToInputValue(transaction.amount),
+            type: transaction.type,
+            date: toDateInputValue(transaction.date),
+            categoryId: transaction.categoryId,
+          }
+        : empty,
+    )
   }, [open, transaction, categories, reset])
 
   return (
@@ -135,7 +159,13 @@ export function TransactionFormModal({
         </Field>
         <div className="form-row">
           <Field label="Data" htmlFor="tx-date" error={errors.date?.message}>
-            <TextInput id="tx-date" type="date" {...register('date')} />
+            <Controller
+              control={control}
+              name="date"
+              render={({ field }) => (
+                <DateField id="tx-date" value={field.value} onChange={field.onChange} />
+              )}
+            />
           </Field>
           <Field label="Valor" htmlFor="tx-amount" error={errors.amount?.message}>
             <span className="input-shell has-prefix">

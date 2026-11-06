@@ -11,7 +11,7 @@ import { useFinanceData } from '../hooks/useFinanceData'
 import { api } from '../lib/graphql/client'
 import { getErrorMessage } from '../lib/graphql/errors'
 import type { Transaction } from '../lib/graphql/types'
-import { categoryTone } from '../lib/categoryTone'
+import { categoryAppearance } from '../lib/categoryAppearance'
 import { centsToDisplay } from '../lib/money'
 import { Icon } from '../components/ui/Icon'
 
@@ -201,8 +201,8 @@ export function TransactionsPage() {
               {visible.map((item) => (
                 <li key={item.id} className="data-row">
                   <div className="tx-description">
-                    <span className={`summary-icon tag tag-${categoryTone(item.category.name)}`}>
-                      <Icon name="tag" />
+                    <span className={`summary-icon tag tag-${categoryAppearance(item.category).color}`}>
+                      <Icon name={categoryAppearance(item.category).icon} />
                     </span>
                     <strong>{item.description}</strong>
                   </div>
@@ -213,7 +213,7 @@ export function TransactionsPage() {
                       year: '2-digit',
                     })}
                   </span>
-                  <span className={`tag tag-${categoryTone(item.category.name)}`}>{item.category.name}</span>
+                  <span className={`tag tag-${categoryAppearance(item.category).color}`}>{item.category.name}</span>
                   <span className={item.type === 'INCOME' ? 'type-indicator positive' : 'type-indicator negative'}>
                     <Icon name={item.type === 'INCOME' ? 'circle-arrow-up' : 'circle-arrow-down'} />
                     {item.type === 'INCOME' ? 'Entrada' : 'Saída'}
