@@ -78,8 +78,10 @@ O proxy do Vite encaminha `/graphql` e `/auth` ao backend para que o cookie Http
 
 - **Sem Lembrar-me:** access JWT em memória + `sessionStorage` (reload da aba mantém a sessão; fechar o navegador não deve persistir).
 - **Com Lembrar-me:** refresh token rotativo em cookie HttpOnly (`financy_refresh`, `Path=/auth`) + access curto; restauração via `POST /auth/refresh`.
-- **Logout:** limpa storage e chama `POST /auth/logout` (revoga o refresh).
+- **Logout:** limpa o estado local imediatamente e tenta `POST /auth/logout` em paralelo (best-effort). Falha de rede não mantém a UI autenticada.
+- **Access expirado:** refresh coordenado + retry único da operação GraphQL autenticada (não há retry em falha de rede).
 - **Reset de senha:** incrementa `sessionVersion` e revoga refresh tokens; JWTs antigos deixam de autenticar.
+- **Rate limiting:** usa o IP do socket por padrão. Só confia em `X-Forwarded-For` quando o peer está listado em `TRUSTED_PROXIES` (veja `backend/.env.example`).
 
 ## Testes
 

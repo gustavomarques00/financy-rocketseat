@@ -43,9 +43,13 @@ financy-rocketseat/
 - Access JWT em `Authorization: Bearer <token>`
 - Sem Lembrar-me: memória + `sessionStorage` (XSS ainda pode ler o access token da aba)
 - Com Lembrar-me: refresh HttpOnly + access em memória; bootstrap via `/auth/refresh`
-- Logout revoga refresh no servidor e limpa storage
+- Logout limpa o estado local imediatamente; a revogação remota é best-effort
+- Após logout, `financy.auth.suppress-restore` impede restauração automática via cookie na mesma aba
+- Access expirado: o cliente GraphQL faz um único refresh coordenado e repete a operação uma vez (somente após `UNAUTHENTICATED` GraphQL; sem retry em falha de rede/5xx)
+- Mutations autenticadas só são repetidas quando o erro GraphQL comprova rejeição pré-resolver (`requireAuth`)
 - Páginas privadas não renderizam conteúdo antes do bootstrap da sessão
 - Rotas `/forgot-password` e `/reset-password` são públicas
+- Rate limiting in-memory é por processo (sem Redis); adequado ao deploy single-node do desafio
 
 ### Modais
 
@@ -117,6 +121,7 @@ Visual alinhado ao preview Community + tema existente; fidelidade pixel-perfect 
 | Refresh | Cookie HttpOnly `financy_refresh` em `Path=/auth`; hash no banco; rotação |
 | CSRF | Header obrigatório `X-Financy-CSRF: 1` em `/auth/refresh` e `/auth/logout` |
 | Recuperação de senha | Tokens opacos CSPRNG (≥256 bits), só hash persistido; e-mail via transporte configurável |
+| Rate limiting IP | TCP peer por padrão; `X-Forwarded-For` só se o peer estiver em `TRUSTED_PROXIES` |
 | Issuer / audience | `financy-backend` / `financy-frontend` |
 | Algoritmo aceito | apenas `HS256` |
 
