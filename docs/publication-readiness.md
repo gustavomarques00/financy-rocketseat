@@ -6,7 +6,10 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 
 - Repositório: `gustavomarques00/financy-rocketseat`
 - Visibilidade: **PUBLIC**
-- Código publicado a partir de `be4e0790eee0c397edc4d67518c6cf6b99b7c500`
+- A versão atual da branch `main` deve ser consultada diretamente no GitHub. Os SHAs abaixo são marcos históricos de validação e publicação.
+- Baseline funcional validado: `be4e0790eee0c397edc4d67518c6cf6b99b7c500`
+- Atualização documental pública posteriormente confirmada: `52505461829e39fb655a4555d86561ee24f75222`
+- Os commits entre esse baseline e o marco documental alteram somente Markdown. As suítes não foram reexecutadas nesses commits.
 - Figma: `FIGMA_PARTIAL` (estrutura das seis telas; logo oficial, escala tipográfica e texto dos overlays de Gestão ainda incompletos)
 - Conta: nome e e-mail somente para consulta; sem mutation de perfil
 - Submissão acadêmica: não realizada

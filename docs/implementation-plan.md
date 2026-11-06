@@ -119,14 +119,18 @@ Entregas verificáveis sem datas arbitrárias. Cada etapa possui critérios obje
 
 ## Dependências entre etapas
 
+Registro do plano na Etapa 4. A seta abaixo marcava a etapa em andamento naquele momento. Não descreve a etapa corrente do projeto.
+
 ```text
 Etapa 1 (Foundation) ✓
     └── Etapa 2 (Backend Core) ✓
             └── Etapa 3 (Frontend Functional) ✓
-                    └── Etapa 4 (Acceptance & Submission) ← atual
+                    └── Etapa 4 (Acceptance & Submission) ← em andamento nesta etapa
 ```
 
-## Fora de escopo até autorização explícita
+## Fora de escopo na Etapa 4
+
+Lista vigente apenas até a autorização explícita daquela etapa. Não é uma proibição atual.
 
 - Merge da PR da Etapa 4
 - Deploy em produção
@@ -135,4 +139,13 @@ Etapa 1 (Foundation) ✓
 - Publicação no LinkedIn
 - Alterações na Engineering Knowledge Base
 
-A visibilidade pública foi aplicada depois dessas etapas, com autorização explícita. O envio à Rocketseat permanece pendente e não está registrado neste repositório.
+## Estado atual após conclusão das execuções
+
+- Foundation concluída.
+- Backend Core concluído.
+- Frontend Functional concluído.
+- Acceptance e QA concluídos.
+- Revisão visual realizada, com ressalvas em `docs/figma-fidelity-audit.md`. A classificação permanece `FIGMA_PARTIAL`.
+- Correções finais integradas, inclusive a página de conta somente para consulta.
+- Repositório GitHub público. Durante o desenvolvimento ele era privado.
+- Submissão à Rocketseat ainda não realizada.
