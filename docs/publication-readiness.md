@@ -10,8 +10,8 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 - Baseline funcional validado: `be4e0790eee0c397edc4d67518c6cf6b99b7c500`
 - Atualização documental pública posteriormente confirmada: `52505461829e39fb655a4555d86561ee24f75222`
 - Os commits entre esse baseline e o marco documental alteram somente Markdown. As suítes não foram reexecutadas nesses commits.
-- Figma: `FIGMA_PARTIAL` (Style Guide, telas e modais conferidos por capturas do usuário; logo oficial, escala tipográfica, descrição de categoria e salvamento de perfil ainda incompletos)
-- Conta: nome e e-mail somente para consulta; sem mutation de perfil
+- Figma: `FIGMA_PARTIAL`. Categorias, nome do perfil, totais mensais e calendário foram implementados na branch de fidelidade. O SVG oficial continua indisponível (`LOGO_ASSET_NOT_AVAILABLE`) e a escala tipográfica não foi medida.
+- Conta: o nome é editado por `updateMe`; o e-mail permanece somente leitura.
 - Submissão acadêmica: não realizada
 
 ## Requisitos obrigatórios
@@ -26,6 +26,15 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 | Referência visual ao Figma | PARTIAL | Seis telas comparadas na cópia compartilhada; Style Guide e overlays de Gestão ainda incompletos |
 | `.env.example` em backend e frontend | PASS | Sem valores reais |
 | README reproduzível | PASS | Instalação, migration, testes e E2E |
+
+## Testes reexecutados na Execução 16
+
+| Gate | Resultado |
+|------|-----------|
+| Backend typecheck, `npm test`, build | PASS — 28 testes, incluindo migration com categoria antiga |
+| Frontend typecheck, lint, `npm test`, build | PASS — 18 testes |
+| Playwright desktop e mobile | PASS — 6, com categoria completa, calendário, totais de meses distintos e edição do nome |
+| Banco | SQLite temporário do E2E e do teste de migration. O banco persistente de desenvolvimento não foi usado |
 
 ## Testes reexecutados na Execução 13
 
@@ -57,7 +66,7 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 
 ## Pendências
 
-1. Leitura restante do Style Guide, do SVG oficial e dos overlays de Gestão. O limite do plano Starter impediu nova leitura via MCP. Isso mantém `FIGMA_PARTIAL`.
+1. Exportar o SVG oficial do logo e medir a escala tipográfica. Sem esses assets, `FIGMA_PARTIAL` e `LOGO_ASSET_NOT_AVAILABLE` permanecem. O calendário funciona, mas a geometria do frame expandido não foi medida.
 2. Envio manual na plataforma Rocketseat. A publicação no GitHub não registra esse envio.
 
 ## Publicação

@@ -112,3 +112,18 @@ O usuário forneceu, em 6 nov 2026, sete capturas locais além do Style Guide j�
 | Logo | Símbolo de dois elos e FINANCY | Círculo com ponto | Geometria diferente da captura | P1 | O marcador passou a usar o traço Lucide `link` como aproximação. Não é o SVG oficial | PARTIAL |
 
 `FIGMA_PARTIAL` e `LOGO_PARTIAL` permanecem. A escala tipográfica não foi medida nas capturas. O calendário expandido de Gestão não aparece nessas imagens e não foi criado.
+
+## Execução 16 — comportamento persistido e calendário
+
+As seis pendências funcionais foram tratadas no código. A geometria do logo e a escala tipográfica continuam sem medida oficial. Nenhuma leitura nova foi feita pelo MCP do Figma.
+
+| Item | Evidência | Implementação | Verificação |
+|---|---|---|---|
+| Totais do mês | Rótulos “Receitas do mês” e “Despesas do mês” | Saldo total continua sendo receitas menos despesas de todo o histórico do usuário. Os dois cartões mensais somam apenas transações cuja data financeira, armazenada às 12:00 UTC, cai no mês local corrente | `frontend/src/lib/money.test.ts` e Playwright com um mês anterior |
+| Categoria | Captura do modal com título, descrição, ícones e cores | `description` opcional (até 160 caracteres), `icon` e `color` persistidos. Identificadores em allowlist; categorias antigas recebem `tag` e `green` | Migration `20261106172000_category_appearance`, testes GraphQL e Playwright |
+| Perfil | Botão “Salvar alterações” | `updateMe` altera somente o nome do usuário do JWT. O e-mail permanece somente leitura | Teste GraphQL e Playwright |
+| Calendário | O frame expandido não foi medido | Seletor próprio, em português, com mês, dia, hoje, Escape e setas. A data enviada continua `YYYY-MM-DD` às 12:00 UTC | `DateField.test.tsx` e Playwright em desktop e mobile |
+| Logo | Símbolo de dois elos e FINANCY nas capturas | O marcador continua a aproximação Lucide `link`. Nenhum SVG oficial foi encontrado no repositório | `LOGO_ASSET_NOT_AVAILABLE` |
+| Tipografia | Inter confirmada; tamanhos, raios e sombras sem números oficiais | Tokens já comprovados foram preservados. Nenhuma escala nova foi inventada | PARTIAL |
+
+`FIGMA_PARTIAL` permanece. `LOGO_ASSET_NOT_AVAILABLE` substitui a ideia de que a aproximação atual seja o asset oficial. A semana do calendário começa no domingo; isso foi inferido, não medido no frame.

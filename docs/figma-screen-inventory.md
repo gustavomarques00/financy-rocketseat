@@ -6,6 +6,8 @@
 
 **Status geral da auditoria:** `FIGMA_PARTIAL`
 
+Revisão da Execução 16: descrição, ícone e cor de categoria passam a ser persistidos; o nome do perfil pode ser salvo por `updateMe`; os cartões mensais usam o mês corrente; o modal de transação tem calendário próprio. O SVG oficial do logo não está no repositório (`LOGO_ASSET_NOT_AVAILABLE`) e a escala tipográfica continua sem medida. Ver `docs/figma-fidelity-audit.md`.
+
 Revisão da Execução 15: sete capturas locais das telas e dos dois modais alinharam navegação, filtros, paginação, indicadores e os formulários que o modelo persiste. Descrição, ícone e cor de categoria, o botão de salvar perfil e o SVG oficial do logo continuam fora. Ver `docs/figma-fidelity-audit.md`.
 
 Revisão da Execução 14: cinco capturas locais do Style Guide confirmaram a paleta, Inter e a referência a Lucide. Tokens ausentes, estados de input e botão, tags semânticas e os indicadores Entrada/Saída foram aplicados. O símbolo oficial do logo não foi exportado. Ver `docs/figma-fidelity-audit.md`.
