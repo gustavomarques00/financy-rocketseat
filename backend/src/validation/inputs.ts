@@ -13,6 +13,11 @@ const CATEGORY_NAME_MAX = 60
 const DESCRIPTION_MAX = 200
 const AMOUNT_MAX_CENTS = 999_999_999_99
 
+const passwordSchema = z
+  .string()
+  .min(PASSWORD_MIN, `Password must be at least ${PASSWORD_MIN} characters.`)
+  .max(PASSWORD_MAX, `Password must be at most ${PASSWORD_MAX} characters.`)
+
 export const registerInputSchema = z.object({
   name: z
     .string()
@@ -24,10 +29,8 @@ export const registerInputSchema = z.object({
     .trim()
     .max(EMAIL_MAX, `Email must be at most ${EMAIL_MAX} characters.`)
     .email('Invalid email address.'),
-  password: z
-    .string()
-    .min(PASSWORD_MIN, `Password must be at least ${PASSWORD_MIN} characters.`)
-    .max(PASSWORD_MAX, `Password must be at most ${PASSWORD_MAX} characters.`),
+  password: passwordSchema,
+  rememberMe: z.boolean().optional(),
 })
 
 export const loginInputSchema = z.object({
@@ -37,6 +40,24 @@ export const loginInputSchema = z.object({
     .max(EMAIL_MAX)
     .email('Invalid email address.'),
   password: z.string().min(1, 'Password is required.').max(PASSWORD_MAX),
+  rememberMe: z.boolean().optional(),
+})
+
+export const requestPasswordResetInputSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .max(EMAIL_MAX)
+    .email('Invalid email address.'),
+})
+
+export const resetPasswordInputSchema = z.object({
+  token: z
+    .string()
+    .trim()
+    .min(20, 'Invalid or expired reset token.')
+    .max(200, 'Invalid or expired reset token.'),
+  newPassword: passwordSchema,
 })
 
 export const categoryNameSchema = z

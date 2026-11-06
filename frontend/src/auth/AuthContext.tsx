@@ -1,14 +1,21 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { api } from '../lib/graphql/client'
 import { getErrorCode } from '../lib/graphql/errors'
 import type { User } from '../lib/graphql/types'
 import { AuthContext, type AuthContextValue, type AuthStatus } from './auth-context'
+import { logoutPersistentSession, refreshAccessToken } from './sessionApi'
 import { clearStoredToken, readStoredToken, writeStoredToken } from './tokenStorage'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>('bootstrapping')
   const [token, setToken] = useState<string | null>(null)
   const [user, setUser] = useState<User | null>(null)
+  const refreshInFlight = useRef<Promise<string | null> | null>(null)
+  const tokenRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    tokenRef.current = token
+  }, [token])
 
   const clearSession = useCallback(() => {
     clearStoredToken()
@@ -17,12 +24,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus('anonymous')
   }, [])
 
-  const establishSession = useCallback(async (nextToken: string) => {
-    const me = await api.me(nextToken)
-    writeStoredToken(nextToken)
-    setToken(nextToken)
-    setUser(me)
-    setStatus('authenticated')
+  const establishSession = useCallback(
+    async (nextToken: string, options?: { persistInSessionStorage?: boolean }) => {
+      const me = await api.me(nextToken)
+      if (options?.persistInSessionStorage !== false) {
+        writeStoredToken(nextToken)
+      } else {
+        clearStoredToken()
+      }
+      setToken(nextToken)
+      setUser(me)
+      setStatus('authenticated')
+    },
+    [],
+  )
+
+  const coordinatedRefresh = useCallback(async (): Promise<string | null> => {
+    if (!refreshInFlight.current) {
+      refreshInFlight.current = refreshAccessToken().finally(() => {
+        refreshInFlight.current = null
+      })
+    }
+    return refreshInFlight.current
   }, [])
 
   useEffect(() => {
@@ -30,7 +53,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function bootstrap() {
       const stored = readStoredToken()
-      if (!stored) {
+      if (stored) {
+        try {
+          const me = await api.me(stored)
+          if (!cancelled) {
+            setToken(stored)
+            setUser(me)
+            setStatus('authenticated')
+          }
+          return
+        } catch {
+          clearStoredToken()
+        }
+      }
+
+      const refreshed = await coordinatedRefresh()
+      if (!refreshed) {
         if (!cancelled) {
           setStatus('anonymous')
         }
@@ -38,18 +76,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        const me = await api.me(stored)
+        const me = await api.me(refreshed)
         if (!cancelled) {
-          setToken(stored)
+          clearStoredToken()
+          setToken(refreshed)
           setUser(me)
           setStatus('authenticated')
         }
       } catch {
-        clearStoredToken()
         if (!cancelled) {
-          setToken(null)
-          setUser(null)
-          setStatus('anonymous')
+          clearSession()
         }
       }
     }
@@ -59,48 +95,84 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [clearSession, coordinatedRefresh])
 
   const login = useCallback(
-    async (input: { email: string; password: string }) => {
-      const payload = await api.login(input)
-      await establishSession(payload.token)
+    async (input: { email: string; password: string; rememberMe?: boolean }) => {
+      const rememberMe = input.rememberMe === true
+      const payload = await api.login({
+        email: input.email,
+        password: input.password,
+        rememberMe,
+      })
+      await establishSession(payload.token, {
+        persistInSessionStorage: !rememberMe,
+      })
     },
     [establishSession],
   )
 
   const register = useCallback(
-    async (input: { name: string; email: string; password: string }) => {
-      const payload = await api.register(input)
-      await establishSession(payload.token)
+    async (input: {
+      name: string
+      email: string
+      password: string
+      rememberMe?: boolean
+    }) => {
+      const rememberMe = input.rememberMe === true
+      const payload = await api.register({
+        name: input.name,
+        email: input.email,
+        password: input.password,
+        rememberMe,
+      })
+      await establishSession(payload.token, {
+        persistInSessionStorage: !rememberMe,
+      })
     },
     [establishSession],
   )
 
-  const updateProfile = useCallback(
-    async (name: string) => {
-      if (!token) {
-        return
-      }
-      const nextUser = await api.updateMe(token, { name })
-      setUser(nextUser)
-    },
-    [token],
-  )
+  const updateProfile = useCallback(async (name: string) => {
+    const current = tokenRef.current
+    if (!current) {
+      return
+    }
+    const nextUser = await api.updateMe(current, { name })
+    setUser(nextUser)
+  }, [])
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    await logoutPersistentSession()
     clearSession()
   }, [clearSession])
 
   const handleAuthFailure = useCallback(
     (error: unknown) => {
-      if (getErrorCode(error) === 'UNAUTHENTICATED') {
-        clearSession()
-        return true
+      if (getErrorCode(error) !== 'UNAUTHENTICATED') {
+        return false
       }
-      return false
+
+      void (async () => {
+        const refreshed = await coordinatedRefresh()
+        if (!refreshed) {
+          clearSession()
+          return
+        }
+        try {
+          const me = await api.me(refreshed)
+          clearStoredToken()
+          setToken(refreshed)
+          setUser(me)
+          setStatus('authenticated')
+        } catch {
+          clearSession()
+        }
+      })()
+
+      return true
     },
-    [clearSession],
+    [clearSession, coordinatedRefresh],
   )
 
   const value = useMemo<AuthContextValue>(

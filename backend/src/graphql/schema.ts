@@ -1,7 +1,8 @@
 import { createSchema } from 'graphql-yoga'
-import type { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '../lib/prisma.js'
 import type { Env } from '../env.js'
 import { mapDomainError, requireAuth, toGraphQLErrorMessage } from '../errors.js'
+import type { MailTransport } from '../mail/types.js'
 import {
   getAuthenticatedUser,
   loginUser,
@@ -16,6 +17,10 @@ import {
   updateCategory,
 } from '../services/categories.js'
 import {
+  requestPasswordReset,
+  resetPassword,
+} from '../services/passwordReset.js'
+import {
   createTransaction,
   deleteTransaction,
   getTransaction,
@@ -26,6 +31,7 @@ import {
 export type GraphQLContext = {
   prisma: PrismaClient
   env: Env
+  mail: MailTransport
   userId: string | null
 }
 
@@ -91,11 +97,21 @@ const typeDefs = /* GraphQL */ `
     name: String!
     email: String!
     password: String!
+    rememberMe: Boolean
   }
 
   input LoginInput {
     email: String!
     password: String!
+    rememberMe: Boolean
+  }
+
+  type PasswordResetRequestResult {
+    message: String!
+  }
+
+  type PasswordResetResult {
+    message: String!
   }
 
   input CreateCategoryInput {
@@ -144,6 +160,8 @@ const typeDefs = /* GraphQL */ `
   type Mutation {
     register(input: RegisterInput!): AuthPayload!
     login(input: LoginInput!): AuthPayload!
+    requestPasswordReset(email: String!): PasswordResetRequestResult!
+    resetPassword(token: String!, newPassword: String!): PasswordResetResult!
     updateMe(input: UpdateMeInput!): User!
     createCategory(input: CreateCategoryInput!): Category!
     updateCategory(id: ID!, input: UpdateCategoryInput!): Category!
@@ -335,6 +353,35 @@ const resolvers = {
           token: result.token,
           user: serializeUser(result.user),
         }
+      } catch (error) {
+        mapDomainError(error)
+      }
+    },
+
+    requestPasswordReset: async (
+      _parent: unknown,
+      args: { email: string },
+      context: GraphQLContext,
+    ) => {
+      try {
+        return await requestPasswordReset(context.prisma, context.env, context.mail, {
+          email: args.email,
+        })
+      } catch (error) {
+        mapDomainError(error)
+      }
+    },
+
+    resetPassword: async (
+      _parent: unknown,
+      args: { token: string; newPassword: string },
+      context: GraphQLContext,
+    ) => {
+      try {
+        return await resetPassword(context.prisma, context.env, {
+          token: args.token,
+          newPassword: args.newPassword,
+        })
       } catch (error) {
         mapDomainError(error)
       }

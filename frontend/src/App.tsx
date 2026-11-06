@@ -4,8 +4,10 @@ import { AppShell } from './components/layout/AppShell'
 import { AccountPage } from './pages/AccountPage'
 import { CategoriesPage } from './pages/CategoriesPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
+import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { TransactionsPage } from './pages/TransactionsPage'
 import { ProtectedRoute, PublicOnlyRoute } from './routes/ProtectedRoute'
 import './App.css'
@@ -19,6 +21,9 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Route>
+
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppShell />}>

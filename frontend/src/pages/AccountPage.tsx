@@ -81,7 +81,13 @@ export function AccountPage() {
             {submitting ? 'Salvando…' : 'Salvar alterações'}
           </Button>
         </form>
-        <Button variant="secondary" className="btn-logout" onClick={logout}>
+        <Button
+          variant="secondary"
+          className="btn-logout"
+          onClick={() => {
+            void logout()
+          }}
+        >
           <Icon name="log-out" />
           Sair da conta
         </Button>

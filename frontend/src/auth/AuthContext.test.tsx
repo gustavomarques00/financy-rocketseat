@@ -19,12 +19,21 @@ const apiMocks = vi.hoisted(() => ({
   deleteTransaction: vi.fn(),
 }))
 
+const sessionMocks = vi.hoisted(() => ({
+  refreshAccessToken: vi.fn(),
+  logoutPersistentSession: vi.fn(),
+}))
+
 vi.mock('../lib/graphql/client', () => ({
   api: apiMocks,
 }))
 
+vi.mock('./sessionApi', () => sessionMocks)
+
 vi.mock('../lib/env', () => ({
-  getBackendUrl: () => 'http://localhost:4000/graphql',
+  getBackendUrl: () => '/graphql',
+  getBackendOrigin: () => '',
+  getAuthApiUrl: (path: string) => path,
 }))
 
 function Probe() {
@@ -36,7 +45,7 @@ function Probe() {
       <button type="button" onClick={() => void auth.login({ email: 'a@b.com', password: 'password-1' })}>
         login
       </button>
-      <button type="button" onClick={() => auth.logout()}>
+      <button type="button" onClick={() => void auth.logout()}>
         logout
       </button>
       <button
@@ -53,6 +62,8 @@ describe('AuthContext', () => {
   beforeEach(() => {
     sessionStorage.clear()
     vi.clearAllMocks()
+    sessionMocks.refreshAccessToken.mockResolvedValue(null)
+    sessionMocks.logoutPersistentSession.mockResolvedValue(undefined)
   })
 
   it('bootstraps anonymous session when token is absent', async () => {
@@ -98,11 +109,14 @@ describe('AuthContext', () => {
     expect(sessionStorage.getItem('financy.auth.token')).toBe('token-1')
 
     await user.click(screen.getByRole('button', { name: 'logout' }))
-    expect(screen.getByText('status:anonymous')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('status:anonymous')).toBeInTheDocument()
+    })
     expect(sessionStorage.getItem('financy.auth.token')).toBeNull()
+    expect(sessionMocks.logoutPersistentSession).toHaveBeenCalled()
   })
 
-  it('clears session on UNAUTHENTICATED auth failure', async () => {
+  it('clears session on UNAUTHENTICATED auth failure when refresh fails', async () => {
     const user = userEvent.setup()
     sessionStorage.setItem('financy.auth.token', 'token-1')
     apiMocks.me.mockResolvedValue({
@@ -112,6 +126,7 @@ describe('AuthContext', () => {
       createdAt: '',
       updatedAt: '',
     })
+    sessionMocks.refreshAccessToken.mockResolvedValue(null)
 
     render(
       <AuthProvider>
@@ -124,7 +139,9 @@ describe('AuthContext', () => {
     })
 
     await user.click(screen.getByRole('button', { name: 'expire' }))
-    expect(screen.getByText('status:anonymous')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText('status:anonymous')).toBeInTheDocument()
+    })
     expect(sessionStorage.getItem('financy.auth.token')).toBeNull()
   })
 })

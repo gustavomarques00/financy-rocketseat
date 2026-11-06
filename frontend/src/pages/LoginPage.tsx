@@ -14,6 +14,7 @@ import { getErrorMessage } from '../lib/graphql/errors'
 const schema = z.object({
   email: z.string().trim().email('Informe um e-mail válido.'),
   password: z.string().min(1, 'Informe a senha.'),
+  rememberMe: z.boolean().optional(),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -29,7 +30,7 @@ export function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', rememberMe: false },
   })
 
   return (
@@ -43,7 +44,11 @@ export function LoginPage() {
           onSubmit={handleSubmit(async (values) => {
             setError(null)
             try {
-              await login(values)
+              await login({
+                email: values.email,
+                password: values.password,
+                rememberMe: values.rememberMe === true,
+              })
               navigate('/', { replace: true })
             } catch (err) {
               setError(getErrorMessage(err, 'Não foi possível entrar.'))
@@ -84,12 +89,12 @@ export function LoginPage() {
           </Field>
           <div className="auth-row">
             <label className="check-row">
-              <input type="checkbox" />
+              <input type="checkbox" {...register('rememberMe')} />
               Lembrar-me
             </label>
-            <button type="button" className="text-link" disabled>
+            <Link className="text-link" to="/forgot-password">
               Recuperar senha
-            </button>
+            </Link>
           </div>
           {error ? <Feedback tone="error">{error}</Feedback> : null}
           <Button type="submit" disabled={isSubmitting}>

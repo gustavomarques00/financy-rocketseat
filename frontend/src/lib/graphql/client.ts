@@ -10,6 +10,8 @@ import {
   LOGIN_MUTATION,
   ME_QUERY,
   REGISTER_MUTATION,
+  REQUEST_PASSWORD_RESET_MUTATION,
+  RESET_PASSWORD_MUTATION,
   UPDATE_ME_MUTATION,
   TRANSACTIONS_QUERY,
   UPDATE_CATEGORY_MUTATION,
@@ -32,7 +34,10 @@ export function createGraphqlClient(token?: string | null): GraphQLClient {
     headers.Authorization = `Bearer ${token}`
   }
 
-  return new GraphQLClient(getBackendUrl(), { headers })
+  return new GraphQLClient(getBackendUrl(), {
+    headers,
+    credentials: 'include',
+  })
 }
 
 async function request<T>(
@@ -48,16 +53,36 @@ async function request<T>(
 }
 
 export const api = {
-  register(input: { name: string; email: string; password: string }) {
+  register(input: {
+    name: string
+    email: string
+    password: string
+    rememberMe?: boolean
+  }) {
     return request<{ register: AuthPayload }>(null, REGISTER_MUTATION, { input }).then(
       (data) => data.register,
     )
   },
 
-  login(input: { email: string; password: string }) {
+  login(input: { email: string; password: string; rememberMe?: boolean }) {
     return request<{ login: AuthPayload }>(null, LOGIN_MUTATION, { input }).then(
       (data) => data.login,
     )
+  },
+
+  requestPasswordReset(email: string) {
+    return request<{ requestPasswordReset: { message: string } }>(
+      null,
+      REQUEST_PASSWORD_RESET_MUTATION,
+      { email },
+    ).then((data) => data.requestPasswordReset)
+  },
+
+  resetPassword(token: string, newPassword: string) {
+    return request<{ resetPassword: { message: string } }>(null, RESET_PASSWORD_MUTATION, {
+      token,
+      newPassword,
+    }).then((data) => data.resetPassword)
   },
 
   me(token: string) {

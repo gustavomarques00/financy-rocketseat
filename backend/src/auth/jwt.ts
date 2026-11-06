@@ -6,6 +6,7 @@ const JWT_AUDIENCE = 'financy-frontend'
 
 export type AccessTokenPayload = {
   sub: string
+  sessionVersion: number
 }
 
 function encodeSecret(secret: string): Uint8Array {
@@ -14,10 +15,11 @@ function encodeSecret(secret: string): Uint8Array {
 
 export async function signAccessToken(
   userId: string,
+  sessionVersion: number,
   secret: string,
   expiresIn: string,
 ): Promise<string> {
-  return new jose.SignJWT({})
+  return new jose.SignJWT({ sv: sessionVersion })
     .setProtectedHeader({ alg: JWT_ALG })
     .setSubject(userId)
     .setIssuer(JWT_ISSUER)
@@ -41,7 +43,10 @@ export async function verifyAccessToken(
     throw new Error('Invalid token subject')
   }
 
-  return { sub: payload.sub }
+  const sessionVersion =
+    typeof payload.sv === 'number' && Number.isInteger(payload.sv) ? payload.sv : 0
+
+  return { sub: payload.sub, sessionVersion }
 }
 
 export function extractBearerToken(authorizationHeader: string | null): string | null {
