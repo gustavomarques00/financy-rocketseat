@@ -10,7 +10,7 @@ import { Icon } from '../components/ui/Icon'
 import { useFinanceData } from '../hooks/useFinanceData'
 import { api } from '../lib/graphql/client'
 import { getErrorMessage } from '../lib/graphql/errors'
-import { categoryTone } from '../lib/categoryTone'
+import { categoryAppearance } from '../lib/categoryAppearance'
 import { centsToDisplay, summarizeTransactions } from '../lib/money'
 
 function shortDate(iso: string): string {
@@ -89,11 +89,13 @@ export function DashboardPage() {
                 />
               ) : (
                 <ul className="data-list">
-                  {recent.map((item) => (
+                  {recent.map((item) => {
+                    const appearance = categoryAppearance(item.category)
+                    return (
                     <li key={item.id} className="data-row">
                       <div className="tx-description">
-                        <span className={`summary-icon tag tag-${categoryTone(item.category.name)}`}>
-                          <Icon name="tag" />
+                        <span className={`summary-icon tag tag-${appearance.color}`}>
+                          <Icon name={appearance.icon} />
                         </span>
                         <div>
                           <strong>{item.description}</strong>
@@ -101,7 +103,7 @@ export function DashboardPage() {
                         </div>
                       </div>
                       <div className="row-meta">
-                        <span className={`tag tag-${categoryTone(item.category.name)}`}>
+                        <span className={`tag tag-${appearance.color}`}>
                           {item.category.name}
                         </span>
                         <strong className={item.type === 'INCOME' ? 'type-indicator positive' : 'type-indicator negative'}>
@@ -110,7 +112,8 @@ export function DashboardPage() {
                         </strong>
                       </div>
                     </li>
-                  ))}
+                    )
+                  })}
                 </ul>
               )}
               <button
@@ -143,7 +146,7 @@ export function DashboardPage() {
                 <ul className="data-list">
                   {categoryStats.map((category) => (
                     <li key={category.id} className="data-row">
-                      <span className={`tag tag-${categoryTone(category.name)}`}>{category.name}</span>
+                      <span className={`tag tag-${categoryAppearance(category).color}`}>{category.name}</span>
                       <span className="muted">
                         {category.count} {category.count === 1 ? 'item' : 'itens'}
                       </span>
