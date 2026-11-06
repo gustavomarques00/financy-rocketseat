@@ -28,7 +28,7 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 | FE-GQL | Cliente GraphQL real | Obrigatório | `graphql-request` | `frontend/src/lib/graphql/client.ts` | E2E contra API local | PASS | — |
 | FE-MODAL | Dois formulários modais | Obrigatório | categoria e transação | `components/categories`, `components/transactions` | Playwright abre e salva os dois | PASS | Nomes oficiais dos frames não verificados |
 | FE-ENV | `frontend/.env.example` | Obrigatório | `VITE_BACKEND_URL` | `frontend/.env.example` | inspeção | PASS | — |
-| FE-FIGMA | Interface baseada no Figma | Obrigatório no produto final | tema claro, cards e lista | `docs/figma-fidelity-audit.md` | frames oficiais inspecionados no arquivo `IR3TQC9ofQKZ2km01tq8EB` | PARTIAL | Estrutura das seis telas alinhada. Logo oficial, escala tipográfica e texto dos overlays de Gestão continuam sem leitura. |
+| FE-FIGMA | Interface baseada no Figma | Obrigatório no produto final | tema claro, cards e lista | `docs/figma-fidelity-audit.md` | seis frames da cópia `CysjIzd5ChP9zqqfXrFtz8` lidos no visualizador | PARTIAL | Estrutura alinhada e ícones aproximados. Logo oficial, escala tipográfica e texto dos overlays de Gestão continuam sem leitura suficiente. |
 | FE-RESP | Desktop e mobile | Obrigatório no brief da Etapa 4 | CSS com breakpoint | `frontend/src/App.css` | projetos Playwright desktop e Pixel 5 | PASS | Não compara com frames mobile oficiais |
 | DEL-LAYOUT | Pastas `backend/` e `frontend/` | Obrigatório | monorepo | raiz do repositório | inspeção | PASS | — |
 | DEL-README | Instalação e execução documentadas | Obrigatório | README | `README.md` | comandos reexecutados nesta etapa | PASS | — |
@@ -54,4 +54,5 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 - Frontend: typecheck, lint, 15 testes, build — PASS
 - Playwright: 3 cenários em desktop e 3 em mobile — PASS, incluindo consulta da conta e ausência do botão de salvamento
 - E2E usa SQLite temporário em `e2e/.tmp`, ignorado pelo Git
-- Contagem após a publicação: 25 PASS, 3 PARTIAL, 0 FAIL, 0 NOT_VERIFIED, 1 NOT_APPLICABLE. `DEL-PUBLIC` passou a PASS porque o GitHub está público. `DEL-SUBMIT` permanece NOT_APPLICABLE. `FE-FIGMA` não foi promovido. Esta atualização é documental e não reexecuta as suítes.
+- Contagem após a publicação: 25 PASS, 3 PARTIAL, 0 FAIL, 0 NOT_VERIFIED, 1 NOT_APPLICABLE. `DEL-PUBLIC` passou a PASS porque o GitHub está público. `DEL-SUBMIT` permanece NOT_APPLICABLE.
+- Execução 13, na branch de fidelidade visual: backend typecheck, 24 testes e build PASS; frontend typecheck, lint, 15 testes e build PASS; Playwright 6 PASS (desktop e mobile). `FE-FIGMA` permanece PARTIAL. `SEC-SESSION` e `SEC-PRISMA-ADV` não mudaram.
