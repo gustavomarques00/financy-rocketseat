@@ -13,6 +13,7 @@ import { getErrorMessage } from '../lib/graphql/errors'
 import type { Transaction } from '../lib/graphql/types'
 import { categoryTone } from '../lib/categoryTone'
 import { centsToDisplay } from '../lib/money'
+import { Icon } from '../components/ui/Icon'
 
 export function TransactionsPage() {
   const { token, handleAuthFailure } = useAuth()
@@ -27,7 +28,18 @@ export function TransactionsPage() {
   const [query, setQuery] = useState('')
   const [typeFilter, setTypeFilter] = useState<'ALL' | 'INCOME' | 'EXPENSE'>('ALL')
   const [categoryFilter, setCategoryFilter] = useState('ALL')
+  const [periodFilter, setPeriodFilter] = useState('ALL')
   const [page, setPage] = useState(1)
+
+  const periods = useMemo(() => {
+    const labels = new Map<string, string>()
+    for (const item of transactions) {
+      const date = new Date(item.date)
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+      labels.set(key, date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }))
+    }
+    return [...labels.entries()].sort((left, right) => right[0].localeCompare(left[0]))
+  }, [transactions])
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase('pt-BR')
@@ -41,9 +53,16 @@ export function TransactionsPage() {
       if (categoryFilter !== 'ALL' && item.categoryId !== categoryFilter) {
         return false
       }
+      if (periodFilter !== 'ALL') {
+        const date = new Date(item.date)
+        const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+        if (key !== periodFilter) {
+          return false
+        }
+      }
       return true
     })
-  }, [transactions, query, typeFilter, categoryFilter])
+  }, [transactions, query, typeFilter, categoryFilter, periodFilter])
 
   const pageSize = 10
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize))
@@ -90,15 +109,18 @@ export function TransactionsPage() {
           <div className="filters">
             <label className="field">
               <span className="field-label">Buscar</span>
-              <input
-                className="field-control"
-                value={query}
-                placeholder="Buscar por descrição"
-                onChange={(event) => {
-                  setQuery(event.target.value)
-                  setPage(1)
-                }}
-              />
+              <span className="input-shell">
+                <Icon name="search" />
+                <input
+                  className="field-control"
+                  value={query}
+                  placeholder="Buscar por descrição"
+                  onChange={(event) => {
+                    setQuery(event.target.value)
+                    setPage(1)
+                  }}
+                />
+              </span>
             </label>
             <label className="field">
               <span className="field-label">Tipo</span>
@@ -135,6 +157,25 @@ export function TransactionsPage() {
                 ))}
               </select>
             </label>
+            <label className="field">
+              <span className="field-label">Período</span>
+              <select
+                className="field-control"
+                aria-label="Filtrar por período"
+                value={periodFilter}
+                onChange={(event) => {
+                  setPeriodFilter(event.target.value)
+                  setPage(1)
+                }}
+              >
+                <option value="ALL">Todos</option>
+                {periods.map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
           {transactions.length === 0 ? (
             <EmptyState
@@ -161,16 +202,20 @@ export function TransactionsPage() {
                     <div className="row-actions">
                       <Button
                         variant="ghost"
+                        className="icon-button"
+                        aria-label="Editar"
                         onClick={() => {
                           setEditing(item)
                           setFormError(null)
                           setModalOpen(true)
                         }}
                       >
-                        Editar
+                        <Icon name="pencil" />
                       </Button>
                       <Button
                         variant="danger"
+                        className="icon-button"
+                        aria-label="Excluir"
                         onClick={async () => {
                           if (!token) {
                             return
@@ -189,7 +234,7 @@ export function TransactionsPage() {
                           }
                         }}
                       >
-                        Excluir
+                        <Icon name="trash" />
                       </Button>
                     </div>
                 </li>

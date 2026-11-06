@@ -1,5 +1,6 @@
 import { useAuth } from '../auth/useAuth'
 import { Button } from '../components/ui/Button'
+import { Icon } from '../components/ui/Icon'
 import { initials } from '../lib/categoryTone'
 
 export function AccountPage() {
@@ -28,6 +29,7 @@ export function AccountPage() {
         </dl>
         <p className="field-hint">Estes dados são apresentados apenas para consulta nesta versão.</p>
         <Button variant="secondary" onClick={logout}>
+          <Icon name="log-out" />
           Sair da conta
         </Button>
       </div>

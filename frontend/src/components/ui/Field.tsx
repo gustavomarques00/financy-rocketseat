@@ -14,15 +14,17 @@ type FieldProps = {
 
 export function Field({ label, htmlFor, error, children }: FieldProps) {
   return (
-    <label className="field" htmlFor={htmlFor}>
-      <span className="field-label">{label}</span>
+    <div className="field">
+      <label className="field-label" htmlFor={htmlFor}>
+        {label}
+      </label>
       {children}
       {error ? (
         <span className="field-error" role="alert">
           {error}
         </span>
       ) : null}
-    </label>
+    </div>
   )
 }
 

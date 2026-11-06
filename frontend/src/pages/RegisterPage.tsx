@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { useAuth } from '../auth/useAuth'
 import { Logo } from '../components/ui/Logo'
 import { Button } from '../components/ui/Button'
+import { Icon } from '../components/ui/Icon'
 import { Feedback } from '../components/ui/Feedback'
 import { Field, TextInput } from '../components/ui/Field'
 import { getErrorMessage } from '../lib/graphql/errors'
@@ -22,6 +23,7 @@ export function RegisterPage() {
   const { register: registerUser } = useAuth()
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const {
     register,
     handleSubmit,
@@ -50,30 +52,47 @@ export function RegisterPage() {
           })}
         >
           <Field label="Nome completo" htmlFor="register-name" error={errors.name?.message}>
-            <TextInput
-              id="register-name"
-              autoComplete="name"
-              placeholder="Seu nome completo"
-              {...register('name')}
-            />
+            <span className="input-shell">
+              <Icon name="user" />
+              <TextInput
+                id="register-name"
+                autoComplete="name"
+                placeholder="Seu nome completo"
+                {...register('name')}
+              />
+            </span>
           </Field>
           <Field label="E-mail" htmlFor="register-email" error={errors.email?.message}>
-            <TextInput
-              id="register-email"
-              type="email"
-              autoComplete="email"
-              placeholder="mail@exemplo.com"
-              {...register('email')}
-            />
+            <span className="input-shell">
+              <Icon name="mail" />
+              <TextInput
+                id="register-email"
+                type="email"
+                autoComplete="email"
+                placeholder="mail@exemplo.com"
+                {...register('email')}
+              />
+            </span>
           </Field>
           <Field label="Senha" htmlFor="register-password" error={errors.password?.message}>
-            <TextInput
-              id="register-password"
-              type="password"
-              autoComplete="new-password"
-              placeholder="Digite sua senha"
-              {...register('password')}
-            />
+            <span className="input-shell has-trailing">
+              <Icon name="lock" />
+              <TextInput
+                id="register-password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                placeholder="Digite sua senha"
+                {...register('password')}
+              />
+              <button
+                type="button"
+                className="input-toggle"
+                aria-label={showPassword ? 'Ocultar caracteres' : 'Exibir caracteres'}
+                onClick={() => setShowPassword((current) => !current)}
+              >
+                <Icon name={showPassword ? 'eye-off' : 'eye'} />
+              </button>
+            </span>
           </Field>
           <p className="field-hint">A senha deve ter no mínimo 8 caracteres</p>
           {error ? <Feedback tone="error">{error}</Feedback> : null}
@@ -84,6 +103,7 @@ export function RegisterPage() {
         <div className="auth-divider">ou</div>
         <p className="auth-switch">Já tem uma conta?</p>
         <Link className="btn btn-secondary" to="/login">
+          <Icon name="log-in" />
           Fazer login
         </Link>
       </div>

@@ -86,7 +86,7 @@ describe('Financy frontend app', () => {
     render(<App />)
 
     await user.type(await screen.findByLabelText(/e-mail/i), 'gustavo@example.com')
-    await user.type(screen.getByLabelText(/senha/i), 'password-1')
+    await user.type(screen.getByLabelText(/^senha$/i), 'password-1')
     await user.click(screen.getByRole('button', { name: /entrar/i }))
 
     expect(await screen.findByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
@@ -111,7 +111,7 @@ describe('Financy frontend app', () => {
 
     await user.type(await screen.findByLabelText(/nome completo/i), 'Gustavo')
     await user.type(screen.getByLabelText(/e-mail/i), 'gustavo@example.com')
-    await user.type(screen.getByLabelText(/senha/i), 'password-1')
+    await user.type(screen.getByLabelText(/^senha$/i), 'password-1')
     await user.click(screen.getByRole('button', { name: /cadastrar/i }))
 
     expect(apiMocks.register).toHaveBeenCalled()

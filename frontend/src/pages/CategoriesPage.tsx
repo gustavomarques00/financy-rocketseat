@@ -8,6 +8,7 @@ import { useFinanceData } from '../hooks/useFinanceData'
 import { api } from '../lib/graphql/client'
 import { getErrorCode, getErrorMessage } from '../lib/graphql/errors'
 import { categoryTone } from '../lib/categoryTone'
+import { Icon } from '../components/ui/Icon'
 import type { Category } from '../lib/graphql/types'
 
 export function CategoriesPage() {
@@ -96,16 +97,20 @@ export function CategoriesPage() {
                     <div className="row-actions">
                     <Button
                       variant="ghost"
+                      className="icon-button"
+                      aria-label="Editar"
                       onClick={() => {
                         setEditing(category)
                         setFormError(null)
                         setModalOpen(true)
                       }}
                     >
-                      Editar
+                      <Icon name="pencil" />
                     </Button>
                     <Button
                       variant="danger"
+                      className="icon-button"
+                      aria-label="Excluir"
                       onClick={async () => {
                         if (!token) {
                           return
@@ -130,7 +135,7 @@ export function CategoriesPage() {
                         }
                       }}
                     >
-                      Excluir
+                      <Icon name="trash" />
                     </Button>
                     </div>
                   </div>

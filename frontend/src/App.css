@@ -359,6 +359,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.4rem;
 }
 
 .btn:disabled {
@@ -398,6 +399,75 @@
 .field-label {
   font-size: 0.82rem;
   font-weight: 600;
+}
+
+.icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+.input-shell {
+  position: relative;
+  display: block;
+}
+
+.input-shell .field-control {
+  padding-left: 2.35rem;
+}
+
+.input-shell.has-trailing .field-control {
+  padding-right: 2.4rem;
+}
+
+.input-shell > .icon,
+.input-toggle {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--color-gray-500);
+  transform: translateY(-50%);
+}
+
+.input-shell > .icon {
+  left: 0.75rem;
+  pointer-events: none;
+}
+
+.input-toggle {
+  right: 0.35rem;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.summary-label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.summary-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  padding: 0;
+}
+
+.icon-button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
 }
 
 .field-control {
@@ -444,7 +514,7 @@
 
 .filters {
   display: grid;
-  grid-template-columns: 1.4fr repeat(2, minmax(0, 0.8fr));
+  grid-template-columns: 1.4fr repeat(3, minmax(0, 0.8fr));
   gap: 0.75rem;
   margin-bottom: 0.85rem;
 }

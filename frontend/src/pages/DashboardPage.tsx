@@ -3,6 +3,7 @@ import { EmptyState, Feedback, LoadingBlock } from '../components/ui/Feedback'
 import { useFinanceData } from '../hooks/useFinanceData'
 import { categoryTone } from '../lib/categoryTone'
 import { centsToDisplay, summarizeTransactions } from '../lib/money'
+import { Icon } from '../components/ui/Icon'
 
 export function DashboardPage() {
   const { loading, error, categories, transactions } = useFinanceData()
@@ -27,15 +28,24 @@ export function DashboardPage() {
         <>
           <div className="summary-grid">
             <article className="summary-card">
-              <p className="eyebrow">Saldo total</p>
+              <p className="summary-label">
+                <span className="summary-icon tag tag-purple"><Icon name="wallet" /></span>
+                <span className="eyebrow">Saldo total</span>
+              </p>
               <p className="summary-value">{centsToDisplay(summary.balanceCents)}</p>
             </article>
             <article className="summary-card">
-              <p className="eyebrow">Receitas do mês</p>
+              <p className="summary-label">
+                <span className="summary-icon tag tag-green"><Icon name="trending-up" /></span>
+                <span className="eyebrow">Receitas do mês</span>
+              </p>
               <p className="summary-value">{centsToDisplay(summary.incomeCents)}</p>
             </article>
             <article className="summary-card">
-              <p className="eyebrow">Despesas do mês</p>
+              <p className="summary-label">
+                <span className="summary-icon tag tag-red"><Icon name="trending-down" /></span>
+                <span className="eyebrow">Despesas do mês</span>
+              </p>
               <p className="summary-value">{centsToDisplay(summary.expenseCents)}</p>
             </article>
           </div>
