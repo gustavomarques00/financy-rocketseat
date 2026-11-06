@@ -10,7 +10,7 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 - Baseline funcional validado: `be4e0790eee0c397edc4d67518c6cf6b99b7c500`
 - Atualização documental pública posteriormente confirmada: `52505461829e39fb655a4555d86561ee24f75222`
 - Os commits entre esse baseline e o marco documental alteram somente Markdown. As suítes não foram reexecutadas nesses commits.
-- Figma: `FIGMA_PARTIAL`. Categorias, nome do perfil, totais mensais e calendário foram implementados na branch de fidelidade. O SVG oficial continua indisponível (`LOGO_ASSET_NOT_AVAILABLE`) e a escala tipográfica não foi medida.
+- Figma: `FIGMA_PARTIAL`. Categorias, nome do perfil, totais mensais e calendário foram implementados. O logo oficial está em `frontend/src/assets/logo.svg`. A escala tipográfica não foi medida.
 - Conta: o nome é editado por `updateMe`; o e-mail permanece somente leitura.
 - Submissão acadêmica: não realizada
 
@@ -66,7 +66,7 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 
 ## Pendências
 
-1. Exportar o SVG oficial do logo e medir a escala tipográfica. Sem esses assets, `FIGMA_PARTIAL` e `LOGO_ASSET_NOT_AVAILABLE` permanecem. O calendário funciona, mas a geometria do frame expandido não foi medida.
+1. Medir a escala tipográfica. O SVG oficial do logo já foi integrado sem alterar seus caminhos. `FIGMA_PARTIAL` permanece por essa escala e pela geometria do calendário, que não foi medida no frame.
 2. Envio manual na plataforma Rocketseat. A publicação no GitHub não registra esse envio.
 
 ## Publicação

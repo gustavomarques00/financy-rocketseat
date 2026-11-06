@@ -11,27 +11,9 @@
 }
 
 .logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  color: var(--color-brand);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.logo-mark {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.logo-word {
-  font-size: 0.95rem;
+  display: block;
+  width: 134px;
+  height: 32px;
 }
 
 .muted {
@@ -529,11 +511,8 @@
 .icon {
   width: 1rem;
   height: 1rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  fill: currentColor;
+  stroke: none;
   flex: none;
 }
 

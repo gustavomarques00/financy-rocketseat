@@ -101,7 +101,7 @@ O E2E sobe backend e frontend locais em portas isoladas (`4100` e `5174`), aplic
 
 ## Limitações
 
-- A interface segue a estrutura dos frames oficiais, mas a fidelidade visual permanece `FIGMA_PARTIAL`. O SVG oficial do logo não está disponível (`LOGO_ASSET_NOT_AVAILABLE`) e a escala tipográfica não foi medida. O símbolo atual é uma aproximação com o traço Lucide `link`.
+- A interface segue a estrutura dos frames oficiais, mas a fidelidade visual permanece `FIGMA_PARTIAL`. O logo usa o SVG oficial em `frontend/src/assets/logo.svg`, sem alteração de caminhos ou viewBox. A escala tipográfica ainda não foi medida.
 - A página de conta salva o nome pela mutation `updateMe`. O e-mail não é editável.
 - "Lembrar-me" não altera a duração da sessão. "Recuperar senha" não tem endpoint.
 - O saldo do dashboard considera todo o histórico do usuário. “Receitas do mês” e “Despesas do mês” consideram apenas a data financeira no mês local corrente. Não há filtro de período no servidor.

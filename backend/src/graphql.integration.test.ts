@@ -466,7 +466,7 @@ describe('GraphQL backend core', () => {
         `,
         {
           id: created.data!.createCategory!.id,
-          input: { name: 'Appearance', description: null, icon: 'car', color: 'red' },
+          input: { name: 'Appearance', description: null, icon: 'car-front', color: 'red' },
         },
         userAToken,
       )
@@ -474,7 +474,7 @@ describe('GraphQL backend core', () => {
       expect(updated.errors).toBeUndefined()
       expect(updated.data?.updateCategory).toEqual({
         description: null,
-        icon: 'car',
+        icon: 'car-front',
         color: 'red',
       })
 
