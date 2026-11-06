@@ -10,7 +10,7 @@ A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas q
 - Baseline funcional validado: `be4e0790eee0c397edc4d67518c6cf6b99b7c500`
 - Atualização documental pública posteriormente confirmada: `52505461829e39fb655a4555d86561ee24f75222`
 - Os commits entre esse baseline e o marco documental alteram somente Markdown. As suítes não foram reexecutadas nesses commits.
-- Figma: `FIGMA_PARTIAL` (Style Guide conferido por cinco capturas do usuário; logo oficial, escala tipográfica e texto dos overlays de Gestão ainda incompletos)
+- Figma: `FIGMA_PARTIAL` (Style Guide, telas e modais conferidos por capturas do usuário; logo oficial, escala tipográfica, descrição de categoria e salvamento de perfil ainda incompletos)
 - Conta: nome e e-mail somente para consulta; sem mutation de perfil
 - Submissão acadêmica: não realizada
 

@@ -95,3 +95,20 @@ O usuário forneceu cinco capturas locais do Style Guide, feitas em 6 nov 2026. 
 | Overlays de Gestão | Sem captura legível nesta execução | Modais funcionais | Texto interno ainda não comparado | P2 | Formulários preservados. Sem calendário customizado | NOT_VERIFIED |
 
 `FIGMA_PARTIAL` permanece por causa do logo e dos overlays de Gestão.
+
+## Execução 15 — capturas das telas e dos modais
+
+O usuário forneceu, em 6 nov 2026, sete capturas locais além do Style Guide já registrado: Acesso e Cadastro, Dashboard, Transações, Categorias, Perfil, modal de nova transação e modal de nova categoria. Não são exportações SVG.
+
+| Item | Figma Evidence | Current UI | Difference | Severity | Action | Verification |
+|---|---|---|---|---|---|---|
+| Login e cadastro | Cartão branco, FINANCY, campos com ícone, lembrar-me, recuperar senha, divisor e botão outline | Mesma hierarquia | A captura de cadastro diz “mínimo 6 caracteres” | P2 | A regra real de 8 caracteres foi mantida. Recuperar senha continua desabilitado | PARTIAL |
+| Dashboard | Três cartões, recentes, categorias e “Nova transação” | Valores do GraphQL | Totais “do mês” continuam o agregado de todas as transações | P1 | Ícones de seta circular, links “Ver todas” e “Gerenciar”, e o modal aberto na própria dashboard | PARTIAL |
+| Transações | Filtros, colunas, Entrada/Saída, ações e paginação | Lista local | Faltavam cabeçalhos e o intervalo de resultados com página anterior/próxima | P1 | Cabeçalhos, intervalo, página ativa e setas desabilitadas nas extremidades | PARTIAL |
+| Categorias | Três indicadores e grade de cartões com descrição | Contagens reais | Descrição não existe no modelo | P1 | Indicadores e cartão com ícone, ações, nome, tag e quantidade. Descrição não foi inventada | PARTIAL |
+| Perfil | Campos e botão “Salvar alterações” | Consulta de nome e e-mail | Não há mutation de perfil | P1 | Campos somente leitura e aviso de e-mail imutável. O botão sem persistência não voltou | PARTIAL |
+| Modal de transação | Despesa/Receita, descrição, data, valor e categoria | CRUD existente | O frame sugere um seletor visual, não um calendário customizado | P1 | Seletor real, data nativa e prefixo R$. Sem calendário próprio | PARTIAL |
+| Modal de categoria | Título, descrição, grade de ícones e cores | Só o nome persiste | Descrição, ícone e cor não estão no modelo | P1 | Título, subtítulo e salvar. Os controles sem persistência não foram criados | PARTIAL |
+| Logo | Símbolo de dois elos e FINANCY | Círculo com ponto | Geometria diferente da captura | P1 | O marcador passou a usar o traço Lucide `link` como aproximação. Não é o SVG oficial | PARTIAL |
+
+`FIGMA_PARTIAL` e `LOGO_PARTIAL` permanecem. A escala tipográfica não foi medida nas capturas. O calendário expandido de Gestão não aparece nessas imagens e não foi criado.

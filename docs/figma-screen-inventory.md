@@ -6,6 +6,8 @@
 
 **Status geral da auditoria:** `FIGMA_PARTIAL`
 
+Revisão da Execução 15: sete capturas locais das telas e dos dois modais alinharam navegação, filtros, paginação, indicadores e os formulários que o modelo persiste. Descrição, ícone e cor de categoria, o botão de salvar perfil e o SVG oficial do logo continuam fora. Ver `docs/figma-fidelity-audit.md`.
+
 Revisão da Execução 14: cinco capturas locais do Style Guide confirmaram a paleta, Inter e a referência a Lucide. Tokens ausentes, estados de input e botão, tags semânticas e os indicadores Entrada/Saída foram aplicados. O símbolo oficial do logo não foi exportado. Ver `docs/figma-fidelity-audit.md`.
 
 Revisão da Execução 13: a cópia `CysjIzd5ChP9zqqfXrFtz8` foi aberta no visualizador. As seis telas desktop foram comparadas. Ícones de formulário, cartões e ações, além do filtro local de período, foram aproximados. Uma nova leitura do quadro `1085:713` confirmou brand, cinzas principais e acentos já usados no tema. O SVG oficial do logo, a escala tipográfica e o texto dos overlays de Gestão continuam sem leitura suficiente. Ver `docs/figma-fidelity-audit.md`.
