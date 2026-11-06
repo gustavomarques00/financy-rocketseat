@@ -7,10 +7,11 @@ Documento de requisitos obrigatórios para a avaliação prática Financy (Rocke
 - Enunciado oficial: [TD 360 — Desafio prático Fase 3 Financy](https://ftr.rocketseat.com.br/projects/td-360-desafio-pratico-da-fase-3-financy?module_slug=avaliacao-de-expansao-de-habilidades)
 - Design: [Figma Community — Financy](https://www.figma.com/community/file/1580994817007013257/financy)
 
-**Limitação de acesso**
+**Limitação de acesso na fase inicial**
 
 - O enunciado na plataforma FTR exige autenticação de aluno; o conteúdo completo da página não pôde ser extraído automaticamente nesta execução.
-- O arquivo do Figma Community não possui `fileKey` compatível com a API/MCP de design (chave numérica de community). Tokens e frames detalhados não foram inspecionados nó a nó. O preview público e a descrição do arquivo foram usados apenas para orientação de tema base.
+- Na fase inicial, o arquivo do Figma Community não possuía `fileKey` compatível com a API/MCP de design (chave numérica de community). Naquele momento, tokens e frames detalhados não foram inspecionados nó a nó. O preview público e a descrição do arquivo foram usados apenas para orientação de tema base.
+- Depois, o arquivo de design `IR3TQC9ofQKZ2km01tq8EB` foi acessado. As seis telas principais foram comparadas com a implementação. O registro está em [docs/figma-fidelity-audit.md](figma-fidelity-audit.md). A fidelidade visual continua `FIGMA_PARTIAL`: a escala tipográfica completa, o SVG oficial do logo e detalhes dos overlays de Gestão permaneceram parcialmente não verificados.
 - Não inventar telas ou regras de negócio além do que estiver documentado aqui e no enunciado/Figma quando acessíveis.
 
 ---
