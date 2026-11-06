@@ -113,7 +113,7 @@ Entregas verificáveis sem datas arbitrárias. Cada etapa possui critérios obje
 6. Repositório permanece privado
 7. Submissão à Rocketseat **não** é feita nesta execução
 
-**Status:** PR #4 integrada na `main`. O checklist `docs/publication-readiness.md` registra a revisão final. Publicação e envio acadêmico continuam pendentes de autorização explícita.
+**Status da etapa:** PR #4 integrada na `main`. O checklist `docs/publication-readiness.md` registra a revisão da época. Nesta etapa a publicação e o envio permaneceram pendentes.
 
 ---
 
@@ -134,3 +134,5 @@ Etapa 1 (Foundation) ✓
 - Submissão na Rocketseat
 - Publicação no LinkedIn
 - Alterações na Engineering Knowledge Base
+
+A visibilidade pública foi aplicada depois dessas etapas, com autorização explícita. O envio à Rocketseat permanece pendente e não está registrado neste repositório.

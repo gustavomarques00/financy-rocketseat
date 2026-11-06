@@ -109,8 +109,11 @@ O E2E sobe backend e frontend locais em portas isoladas (`4100` e `5174`), aplic
 
 ## Status atual
 
-- **Etapas 1 a 4:** concluídas no histórico do repositório.
-- **Etapa 9 — acabamento:** página de conta somente leitura, testes e checklist de entrega. O repositório permanece privado. A publicação e o envio à Rocketseat não foram executados.
+**Status:** repositório público no GitHub, disponível para avaliação acadêmica. A submissão à Rocketseat é realizada separadamente.
+
+- **Etapas 1 a 4:** concluídas no histórico do repositório. Durante o desenvolvimento o repositório permaneceu privado.
+- **Etapa 9 — acabamento:** página de conta somente leitura, testes e checklist de entrega.
+- A atividade ainda não foi enviada à Rocketseat.
 
 ## Licença
 

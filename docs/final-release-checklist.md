@@ -1,6 +1,6 @@
 # Checklist final de entrega — Financy
 
-Este documento registra o estado da versão candidata. Publicação e submissão **não foram executadas**.
+Este documento registra o estado da entrega. O repositório está público. A submissão à Rocketseat **não foi executada**.
 
 ## Concluído
 
@@ -9,14 +9,13 @@ Este documento registra o estado da versão candidata. Publicação e submissão
 - Testes de backend, frontend e Playwright no SQLite temporário.
 - Auditoria de segredos versionados e do advisory de desenvolvimento do Prisma.
 - Documentação de instalação, execução, testes, Figma e limitações no README.
+- Visibilidade pública de `gustavomarques00/financy-rocketseat`. Durante o desenvolvimento o repositório era privado.
 
-## Pendente de autorização
+## Pendente
 
-- Alterar a visibilidade do repositório `gustavomarques00/financy-rocketseat` de PRIVATE para PUBLIC.
-- Enviar o desafio na plataforma Rocketseat depois que o repositório estiver público.
+- Enviar o desafio na plataforma Rocketseat, manualmente, com a URL pública.
 
 ## Não declarar
 
-- O projeto não foi publicado.
-- O desafio não foi enviado.
+- O desafio não foi enviado nem aprovado.
 - A fidelidade visual não está completa (`FIGMA_PARTIAL`).
