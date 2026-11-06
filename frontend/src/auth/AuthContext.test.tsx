@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { AuthProvider } from './AuthContext'
 import { useAuth } from './useAuth'
 import { ApiError } from '../lib/graphql/errors'
+import { isRestoreSuppressed, setRestoreSuppressed } from './logoutBarrier'
 
 const apiMocks = vi.hoisted(() => ({
   me: vi.fn(),
@@ -31,9 +32,9 @@ vi.mock('../lib/graphql/client', () => ({
 vi.mock('./sessionApi', () => sessionMocks)
 
 vi.mock('../lib/env', () => ({
-  getBackendUrl: () => '/graphql',
-  getBackendOrigin: () => '',
-  getAuthApiUrl: (path: string) => path,
+  getBackendUrl: () => 'http://127.0.0.1/graphql',
+  getBackendOrigin: () => 'http://127.0.0.1',
+  getAuthApiUrl: (path: string) => `http://127.0.0.1${path}`,
 }))
 
 function Probe() {
@@ -61,6 +62,7 @@ function Probe() {
 describe('AuthContext', () => {
   beforeEach(() => {
     sessionStorage.clear()
+    setRestoreSuppressed(false)
     vi.clearAllMocks()
     sessionMocks.refreshAccessToken.mockResolvedValue(null)
     sessionMocks.logoutPersistentSession.mockResolvedValue(undefined)
@@ -76,8 +78,15 @@ describe('AuthContext', () => {
     expect(await screen.findByText('status:anonymous')).toBeInTheDocument()
   })
 
-  it('logs in, persists token, and clears session on logout', async () => {
+  it('logs in, persists token, and clears session on logout even if remote revoke hangs', async () => {
     const user = userEvent.setup()
+    let resolveLogout: (() => void) | undefined
+    sessionMocks.logoutPersistentSession.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveLogout = resolve
+        }),
+    )
     apiMocks.login.mockResolvedValue({
       token: 'token-1',
       user: {
@@ -113,10 +122,13 @@ describe('AuthContext', () => {
       expect(screen.getByText('status:anonymous')).toBeInTheDocument()
     })
     expect(sessionStorage.getItem('financy.auth.token')).toBeNull()
+    expect(isRestoreSuppressed()).toBe(true)
     expect(sessionMocks.logoutPersistentSession).toHaveBeenCalled()
+
+    resolveLogout?.()
   })
 
-  it('clears session on UNAUTHENTICATED auth failure when refresh fails', async () => {
+  it('clears session on UNAUTHENTICATED auth failure after client-level recovery failed', async () => {
     const user = userEvent.setup()
     sessionStorage.setItem('financy.auth.token', 'token-1')
     apiMocks.me.mockResolvedValue({
@@ -126,7 +138,6 @@ describe('AuthContext', () => {
       createdAt: '',
       updatedAt: '',
     })
-    sessionMocks.refreshAccessToken.mockResolvedValue(null)
 
     render(
       <AuthProvider>
@@ -143,5 +154,20 @@ describe('AuthContext', () => {
       expect(screen.getByText('status:anonymous')).toBeInTheDocument()
     })
     expect(sessionStorage.getItem('financy.auth.token')).toBeNull()
+    expect(isRestoreSuppressed()).toBe(true)
+  })
+
+  it('does not restore a remember-me cookie after logout barrier is set', async () => {
+    setRestoreSuppressed(true)
+    sessionMocks.refreshAccessToken.mockResolvedValue('should-not-use')
+
+    render(
+      <AuthProvider>
+        <Probe />
+      </AuthProvider>,
+    )
+
+    expect(await screen.findByText('status:anonymous')).toBeInTheDocument()
+    expect(sessionMocks.refreshAccessToken).not.toHaveBeenCalled()
   })
 })

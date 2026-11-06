@@ -296,4 +296,44 @@ describe('auth security: password reset and remember-me', () => {
     })
     expect(response.status).toBe(403)
   })
+
+  it('does not let forged X-Forwarded-For bypass password-reset rate limits', async () => {
+    const email = 'rate-limit-xff@example.com'
+    await graphqlRequest(app.url, REGISTER, {
+      input: { name: 'Rate Limit', email, password: 'password123' },
+    })
+
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const ok = await fetch(app.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Forwarded-For': `198.51.100.${attempt + 1}`,
+        },
+        body: JSON.stringify({
+          query: REQUEST_RESET,
+          variables: { email },
+        }),
+      })
+      const json = (await ok.json()) as { errors?: unknown[] }
+      expect(json.errors).toBeUndefined()
+    }
+
+    const blocked = await fetch(app.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Forwarded-For': '203.0.113.99',
+      },
+      body: JSON.stringify({
+        query: REQUEST_RESET,
+        variables: { email },
+      }),
+    })
+    const blockedJson = (await blocked.json()) as {
+      errors?: Array<{ extensions?: { code?: string } }>
+    }
+    expect(blockedJson.errors?.[0]?.extensions?.code).toBe('RATE_LIMITED')
+  })
 })
+
