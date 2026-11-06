@@ -56,7 +56,11 @@ Adaptação mobile (390 px) é decisão de implementação: o arquivo inspeciona
 
 ## Execução 13 — cópia compartilhada
 
-Fonte principal: arquivo `CysjIzd5ChP9zqqfXrFtz8`, página Projeto `3:376`. A chamada MCP `get_metadata` voltou o limite do plano Starter e não foi repetida. As seis telas foram lidas no visualizador do arquivo, com zoom suficiente para estrutura, cópia e presença de ícones. A página Style Guide `3:377` não foi reaberta. Os dois quadros da seção Gestão continuam visíveis apenas em zoom de 13%; o texto interno permanece `NOT_VERIFIED`.
+Fonte principal: arquivo `CysjIzd5ChP9zqqfXrFtz8`, página Projeto `3:376`. A chamada MCP `get_metadata` voltou o limite do plano Starter e uma nova tentativa manteve o mesmo limite. As seis telas foram lidas no visualizador do arquivo, com zoom suficiente para estrutura, cópia e presença de ícones.
+
+A página Style Guide `3:377` foi reaberta. O quadro `1085:713` foi lido em 100% e 40%. Brand `#124B2B` / `#1F6F43` e a escala de cinza `#111827`, `#374151`, `#4B5563`, `#6B7280`, `#9CA3AF` coincidem com `frontend/src/styles/theme.css`. Laranja, amarelo, verde, rosa e vermelho também coincidem com os tokens já aplicados. A segunda fileira de cinza, azul, roxo, tamanhos tipográficos, raios e sombras não ficaram nítidos o bastante para alterar o código. A família continua Inter.
+
+Os dois quadros da seção Gestão, no nó `3:809`, continuam visíveis: um modal sobre a página escurecida e um calendário. O texto interno permanece `NOT_VERIFIED`. O cartão “Baixar assets” indica `Ctrl+Shift+E`, mas o visualizador anônimo bloqueia exportação.
 
 O SVG oficial do logo não pôde ser exportado: o visualizador anônimo bloqueia inspeção e exportação. O marcador atual (círculo com ponto) permanece uma aproximação. Não foi desenhado um caminho novo.
 
@@ -70,6 +74,6 @@ O SVG oficial do logo não pôde ser exportado: o visualizador anônimo bloqueia
 | Perfil | Frame `3104:2925`. Campos com ícone e botão “Salvar alterações” habilitado | Nome e e-mail somente leitura; “Sair da conta” | O design mostra salvamento. Não há mutation de perfil | P1 | O botão inoperante continua ausente. Ícone de saída adicionado. Divergência intencional | PARTIAL |
 | Modal categoria | Quadro de Gestão, texto ilegível | Modal com nome | Texto do frame não lido | P2 | Nenhuma mudança de contrato | NOT_VERIFIED |
 | Modal transação | Quadro de Gestão com calendário, texto ilegível | Descrição, valor, tipo, data nativa e categoria | Calendário expandido não lido | P2 | Nenhuma mudança de contrato | NOT_VERIFIED |
-| Style Guide | Página `3:377` não reaberta nesta execução | Tokens já documentados do quadro `1085:713` e Inter | Escala, raios e sombras sem nova leitura | P2 | Nenhuma cor nova inventada | NOT_VERIFIED |
+| Style Guide | Página `3:377`, quadro `1085:713`. Brand, cinzas principais e acentos lidos | Tokens atuais de `theme.css` | Segunda fileira de cinza, azul, roxo, escala, raios e sombras ainda sem leitura nítida | P2 | Nenhuma cor nova inventada. Tokens já lidos permanecem | PARTIAL |
 
 Não há divergência estrutural P0 nas seis telas. Adaptação em 390 px continua decisão de implementação: os frames lidos são desktop.
