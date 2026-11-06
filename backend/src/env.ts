@@ -35,6 +35,11 @@ const envSchema = z.object({
     .transform((value) => value === 'true'),
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
+  /**
+   * Comma-separated IP allowlist of reverse proxies that may set X-Forwarded-For.
+   * Empty (default) = never trust forwarded headers; use the TCP peer only.
+   */
+  TRUSTED_PROXIES: z.string().default(''),
 })
 
 export type Env = z.infer<typeof envSchema>

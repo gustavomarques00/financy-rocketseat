@@ -4,6 +4,7 @@ import type { PrismaClient } from './lib/prisma.js'
 import { extractBearerToken, verifyAccessToken } from './auth/jwt.js'
 import type { Env } from './env.js'
 import { AppError } from './errors.js'
+import { parseTrustedProxies, resolveClientIp } from './http/clientIp.js'
 import { runWithRequestContext } from './http/requestContext.js'
 import { prisma as defaultPrisma } from './lib/prisma.js'
 import { schema, type GraphQLContext } from './graphql/schema.js'
@@ -28,12 +29,12 @@ export type CreateAppServerOptions = {
   memoryMail?: MemoryMailTransport
 }
 
-function getClientIp(req: IncomingMessage): string {
-  const forwarded = req.headers['x-forwarded-for']
-  if (typeof forwarded === 'string' && forwarded.length > 0) {
-    return forwarded.split(',')[0]?.trim() || 'unknown'
-  }
-  return req.socket.remoteAddress ?? 'unknown'
+function getClientIp(req: IncomingMessage, env: Env): string {
+  return resolveClientIp({
+    remoteAddress: req.socket.remoteAddress,
+    forwardedFor: req.headers['x-forwarded-for'],
+    trustedProxies: parseTrustedProxies(env.TRUSTED_PROXIES),
+  })
 }
 
 function isAllowedOrigin(env: Env, origin: string | undefined): boolean {
@@ -212,7 +213,7 @@ export function createAppServer(
 
     const store = {
       cookiesToSet: [] as string[],
-      clientIp: getClientIp(req),
+      clientIp: getClientIp(req, env),
       userAgent: typeof req.headers['user-agent'] === 'string' ? req.headers['user-agent'] : null,
       requestUrl,
     }
