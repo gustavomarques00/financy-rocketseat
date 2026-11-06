@@ -1,12 +1,12 @@
 # Checklist de publicação — Financy
 
-Este documento prepara uma decisão futura. A publicação e o envio à Rocketseat **não foram executados**.
+A visibilidade pública foi aplicada depois das etapas de desenvolvimento, nas quais o repositório permaneceu privado. O envio à Rocketseat **não foi executado**.
 
 ## Estado atual
 
 - Repositório: `gustavomarques00/financy-rocketseat`
-- Visibilidade: **PRIVATE**
-- `main` conhecida antes desta etapa: `a81e6ef6e76bc964fdbdf017ebb722b8f86cb4d1`
+- Visibilidade: **PUBLIC**
+- Código publicado a partir de `be4e0790eee0c397edc4d67518c6cf6b99b7c500`
 - Figma: `FIGMA_PARTIAL` (estrutura das seis telas; logo oficial, escala tipográfica e texto dos overlays de Gestão ainda incompletos)
 - Conta: nome e e-mail somente para consulta; sem mutation de perfil
 - Submissão acadêmica: não realizada
@@ -43,19 +43,17 @@ Este documento prepara uma decisão futura. A publicação e o envio à Rocketse
 - JWT em `sessionStorage` não equivale a cookie HttpOnly. Risco residual de XSS documentado em `docs/architecture.md`.
 - `npm audit --omit=dev` no backend ainda aponta `prisma`, `@prisma/config` e `deepmerge-ts` (GHSA-ggr8-5vv4-36mx). O pacote afetado é o CLI, dependência de desenvolvimento. `@prisma/client` não aparece no relatório. A correção indicada é Prisma 7, um upgrade major, e não foi aplicada.
 
-## Pendências que não bloqueiam a revisão, mas impedem declarar entrega concluída
+## Pendências
 
-1. Autorização explícita para tornar o repositório público.
-2. Leitura restante do Style Guide, do SVG oficial e dos overlays de Gestão, se a API do Figma voltar a responder.
-3. Envio manual na plataforma Rocketseat depois da publicação.
+1. Leitura restante do Style Guide, do SVG oficial e dos overlays de Gestão, se a API do Figma voltar a responder. Isso mantém `FIGMA_PARTIAL`.
+2. Envio manual na plataforma Rocketseat. A publicação no GitHub não registra esse envio.
 
-## Publicação manual futura
+## Publicação
 
-1. Reler este checklist e a matriz.
-2. Confirmar que nenhum `.env` ou `.db` entrou no Git.
-3. Alterar a visibilidade para pública somente com autorização.
-4. Conferir se o README permite clonar, instalar, migrar e subir os dois apps.
-5. Não incluir secrets no README nem em issues.
+1. A visibilidade foi alterada para pública com autorização explícita.
+2. Nenhum `.env` ou `.db` faz parte da árvore Git.
+3. O README continua descrevendo instalação, migration e execução local.
+4. Secrets não entram no README nem em issues.
 
 ## Submissão manual futura
 

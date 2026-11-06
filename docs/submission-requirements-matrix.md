@@ -33,7 +33,7 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 | DEL-LAYOUT | Pastas `backend/` e `frontend/` | Obrigatório | monorepo | raiz do repositório | inspeção | PASS | — |
 | DEL-README | Instalação e execução documentadas | Obrigatório | README | `README.md` | comandos reexecutados nesta etapa | PASS | — |
 | DEL-SECRETS | Sem `.env` ou SQLite versionados | Obrigatório | `.gitignore` | `git ls-files` sem `.env`/`.db` | inspeção | PASS | — |
-| DEL-PUBLIC | Repositório público na entrega | Obrigatório só na submissão | repositório PRIVATE | `gh repo view` | inspeção | NOT_APPLICABLE | Publicação exige autorização posterior |
+| DEL-PUBLIC | Repositório público na entrega | Obrigatório só na submissão | repositório PUBLIC | `gh repo view` | inspeção em 5 nov 2026 | PASS | A submissão acadêmica continua pendente |
 | DEL-SUBMIT | Envio à Rocketseat | Obrigatório só na submissão | não executado | — | — | NOT_APPLICABLE | Fora desta execução |
 | SEC-SESSION | Sessão no browser | Obrigatório documentar | memória + `sessionStorage` | `frontend/src/auth/tokenStorage.ts` | `AuthContext.test.tsx` | PARTIAL | Risco residual de XSS; não é cookie HttpOnly |
 | SEC-PRISMA-ADV | Advisory em `prisma`/`deepmerge-ts` | Observação | CLI de desenvolvimento | `npm audit --omit=dev` no backend | auditoria | PARTIAL | Não afeta o runtime GraphQL; sem upgrade major |
@@ -42,11 +42,11 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 
 | Estado | Quantidade |
 |--------|------------|
-| PASS | 24 |
+| PASS | 25 |
 | PARTIAL | 3 |
 | FAIL | 0 |
 | NOT_VERIFIED | 0 |
-| NOT_APPLICABLE | 2 |
+| NOT_APPLICABLE | 1 |
 
 ## Validação desta etapa
 
@@ -54,4 +54,4 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 - Frontend: typecheck, lint, 15 testes, build — PASS
 - Playwright: 3 cenários em desktop e 3 em mobile — PASS, incluindo consulta da conta e ausência do botão de salvamento
 - E2E usa SQLite temporário em `e2e/.tmp`, ignorado pelo Git
-- Contagem da matriz permanece 24 PASS, 3 PARTIAL, 0 FAIL, 0 NOT_VERIFIED, 2 NOT_APPLICABLE. `FE-FIGMA` não foi promovido.
+- Contagem após a publicação: 25 PASS, 3 PARTIAL, 0 FAIL, 0 NOT_VERIFIED, 1 NOT_APPLICABLE. `DEL-PUBLIC` passou a PASS porque o GitHub está público. `DEL-SUBMIT` permanece NOT_APPLICABLE. `FE-FIGMA` não foi promovido. Esta atualização é documental e não reexecuta as suítes.
