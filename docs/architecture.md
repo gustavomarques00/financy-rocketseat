@@ -40,11 +40,12 @@ financy-rocketseat/
 
 ### Sessão
 
-- Token JWT enviado como `Authorization: Bearer <token>`
-- Persistência: memória + `sessionStorage` (não sobrevive ao fechar o navegador)
-- **Não** é equivalente a cookie HttpOnly; XSS ainda pode ler o token
-- Logout e falha `UNAUTHENTICATED` limpam token, usuário e estado financeiro carregado
+- Access JWT em `Authorization: Bearer <token>`
+- Sem Lembrar-me: memória + `sessionStorage` (XSS ainda pode ler o access token da aba)
+- Com Lembrar-me: refresh HttpOnly + access em memória; bootstrap via `/auth/refresh`
+- Logout revoga refresh no servidor e limpa storage
 - Páginas privadas não renderizam conteúdo antes do bootstrap da sessão
+- Rotas `/forgot-password` e `/reset-password` são públicas
 
 ### Modais
 
@@ -58,8 +59,9 @@ Visual alinhado ao preview Community + tema existente; fidelidade pixel-perfect 
 - Endpoint único: `POST /graphql` (GraphQL Yoga + `node:http`).
 - Cliente previsto no frontend: `graphql-request`.
 - Query pública de diagnóstico: `health`.
-- Operações públicas: `health`, `register`, `login`.
-- Operações privadas: `me`, CRUD de `categories` / `transactions`.
+- Operações públicas: `health`, `register`, `login`, `requestPasswordReset`, `resetPassword`.
+- REST auxiliar: `POST /auth/refresh`, `POST /auth/logout`.
+- Operações privadas: `me`, `updateMe`, CRUD de `categories` / `transactions`.
 
 ## Responsabilidades do servidor
 
@@ -75,7 +77,9 @@ Visual alinhado ao preview Community + tema existente; fidelidade pixel-perfect 
 
 | Model | Papel |
 |-------|--------|
-| `User` | Conta; e-mail único; `passwordHash` |
+| `User` | Conta; e-mail único; `passwordHash`; `sessionVersion` para revogar JWTs |
+| `PasswordResetToken` | Hash SHA-256 de token opaco de recuperação; uso único; expiração curta |
+| `RefreshSession` | Hash do refresh token HttpOnly (Lembrar-me); rotação e revogação |
 | `Category` | Categorias por usuário (`userId`, nome único por usuário). `description` opcional, `icon` e `color` com padrão `tag` e `green` |
 | `Transaction` | Transações por usuário; `amount` em centavos (`Int`); tipo `INCOME` \| `EXPENSE` |
 
@@ -103,12 +107,16 @@ Visual alinhado ao preview Community + tema existente; fidelidade pixel-perfect 
 
 | Item | Decisão |
 |------|---------|
-| Cadastro / login | Mutations GraphQL `register` / `login` |
+| Cadastro / login | Mutations GraphQL `register` / `login` (`rememberMe` opcional) |
 | Hash de senha | `bcryptjs` (12 rounds) |
-| Token | JWT HS256 via `jose` |
-| Transporte | `Authorization: Bearer <token>` |
+| Access token | JWT HS256 via `jose`, claim `sv` = `sessionVersion` |
+| Transporte do access | `Authorization: Bearer <token>` |
 | Secret | `JWT_SECRET` (mín. 16 chars, só ambiente) |
-| Expiração | `JWT_EXPIRES_IN` (padrão `7d`) |
+| Expiração (remember) | `JWT_EXPIRES_IN` (padrão `15m`) + refresh cookie |
+| Expiração (sessão de aba) | `JWT_EXPIRES_IN_SESSION` (padrão `8h`) em `sessionStorage` |
+| Refresh | Cookie HttpOnly `financy_refresh` em `Path=/auth`; hash no banco; rotação |
+| CSRF | Header obrigatório `X-Financy-CSRF: 1` em `/auth/refresh` e `/auth/logout` |
+| Recuperação de senha | Tokens opacos CSPRNG (≥256 bits), só hash persistido; e-mail via transporte configurável |
 | Issuer / audience | `financy-backend` / `financy-frontend` |
 | Algoritmo aceito | apenas `HS256` |
 
@@ -116,16 +124,31 @@ Fluxo do contexto:
 
 1. Extrair Bearer token.
 2. Verificar assinatura, algoritmo, issuer, audience e expiração.
-3. Confirmar que o usuário ainda existe.
+3. Confirmar que o usuário existe e que `sessionVersion` do JWT coincide com o banco.
 4. Expor `userId` aos resolvers; **nunca** aceitar `userId` do cliente.
 
-Fail-closed: token ausente, inválido ou expirado → `UNAUTHENTICATED` nas rotas privadas.
+Fail-closed: token ausente, inválido, expirado ou revogado por `sessionVersion` → `UNAUTHENTICATED`.
 
-### Risco residual da sessão
+### Lembrar-me
 
-O JWT fica em memória e em `sessionStorage`. Isso não equivale a cookie `HttpOnly`: um XSS na origem do frontend pode ler o token até a aba ser fechada. A autorização continua no servidor. Não há refresh token, OAuth ou RBAC porque não são requisitos obrigatórios.
+- Desmarcado: access token em memória + `sessionStorage` (sobrevive a reload da aba; não cria cookie de refresh).
+- Marcado: access curto + cookie HttpOnly de refresh; bootstrap tenta `POST /auth/refresh` com `credentials: include`.
+- Em desenvolvimento local, o Vite faz proxy de `/graphql` e `/auth` para o backend, mantendo cookies first-party.
+- Logout chama `POST /auth/logout`, revoga a sessão no banco e limpa o cookie.
+- Reset de senha incrementa `sessionVersion` e revoga todos os refresh tokens.
 
-A dependência de desenvolvimento `prisma` (via `deepmerge-ts`) possui advisory de alta severidade no CLI. Ela não entra no runtime do servidor GraphQL (`@prisma/client` usado pela API). Não houve upgrade major forçado nesta etapa.
+### Recuperação de senha
+
+1. `requestPasswordReset(email)` — resposta genérica (sem enumeração); rate limit por IP+e-mail.
+2. Transporte `file` grava o e-mail em `MAIL_DIR` (padrão `backend/.mail`) para demonstração local.
+3. Transporte `smtp` usa Nodemailer com variáveis `SMTP_*` (sem credenciais no Git).
+4. `resetPassword(token, newPassword)` consome o token em transação, troca o hash e invalida sessões.
+
+### Prisma
+
+- Runtime: Prisma ORM **7.10.1** + `@prisma/adapter-better-sqlite3` + `better-sqlite3`.
+- CLI: `prisma.config.ts` fornece `DATABASE_URL`; client gerado em `backend/src/generated/prisma`.
+- Advisory `GHSA-ggr8-5vv4-36mx` (`deepmerge-ts` &lt; 8): árvore efetiva usa `deepmerge-ts@8.0.2` via `@prisma/config@7.10.1`. `npm audit --omit=dev` = 0 vulnerabilidades.
 
 ## Isolamento / ownership
 
