@@ -4,7 +4,7 @@ Fonte primária: requisitos registrados em `docs/requirements.md` e o enunciado 
 
 Estados: `PASS`, `FAIL`, `PARTIAL`, `NOT_VERIFIED`, `NOT_APPLICABLE`.
 
-Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências apontam para código e testes reexecutados na Etapa 4.
+Nada abaixo foi marcado `PASS` apenas por relatório anterior. A tabela de status reflete o código na `main` após a PR #11; o histórico abaixo registra validações sucessivas.
 
 | ID | Descrição | Classe | Implementação | Evidência | Teste | Resultado | Pendência |
 |----|-----------|--------|---------------|-----------|-------|-----------|-----------|
@@ -36,7 +36,7 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 | DEL-PUBLIC | Repositório público na entrega | Obrigatório só na submissão | repositório PUBLIC | `gh repo view` | inspeção em 5 nov 2026 | PASS | A submissão acadêmica continua pendente |
 | DEL-SUBMIT | Envio à Rocketseat | Obrigatório só na submissão | não executado | — | — | NOT_APPLICABLE | Fora desta execução |
 | SEC-SESSION | Sessão no browser | Obrigatório documentar | access JWT + refresh HttpOnly (Lembrar-me) | `sessions.ts`, `tokenStorage.ts`, `/auth/*` | `auth.security.test.ts`, `AuthContext.test.tsx` | PASS | Access em sessionStorage ainda legível por XSS na aba; refresh não é acessível via JS |
-| SEC-PRISMA-ADV | Advisory em `prisma`/`deepmerge-ts` | Observação | Prisma 7.10.1 + `deepmerge-ts@8.0.2` | `npm ls deepmerge-ts`, `npm audit --omit=dev` | auditoria Execução 18 | PASS | GHSA-ggr8-5vv4-36mx eliminado da árvore efetiva |
+| SEC-PRISMA-ADV | Advisory em `prisma`/`deepmerge-ts` | Observação | Prisma 7.10.1 + `deepmerge-ts@8.0.2` | `npm ls deepmerge-ts`, `npm audit --omit=dev` | auditorias Execuções 18–20 | PASS | GHSA-ggr8-5vv4-36mx eliminado da árvore efetiva |
 
 ## Contagem
 
@@ -63,3 +63,4 @@ Nada abaixo foi marcado `PASS` apenas por relatório anterior. As evidências ap
 - Auditoria final no HEAD `7f3edc1`: backend typecheck, 28 testes e build PASS; frontend typecheck, lint, 18 testes e build PASS; Playwright 6 PASS nos projetos Desktop Chrome e Pixel 5. Logo conferido por SHA-256. Nova medição Figma bloqueada (`FIGMA_MEASUREMENT_BLOCKED`). `SEC-SESSION` e `SEC-PRISMA-ADV` permanecem PARTIAL. Contagem inalterada: 25 PASS, 3 PARTIAL, 0 FAIL, 0 NOT_VERIFIED, 1 NOT_APPLICABLE.
 - Execução 18: recuperação de senha, Lembrar-me com refresh HttpOnly, Prisma 7.10.1 + adapter SQLite. Backend typecheck, 34 testes e build PASS; frontend typecheck, lint, 18 testes e build PASS; `npm audit --omit=dev` = 0; `deepmerge-ts@8.0.2`. `SEC-SESSION` e `SEC-PRISMA-ADV` passam a PASS. Contagem: 27 PASS, 1 PARTIAL (`FE-FIGMA`), 0 FAIL, 0 NOT_VERIFIED, 1 NOT_APPLICABLE.
 - Execução 19: IP de rate limiting só via peer/trusted proxies; refresh+retry GraphQL coordenado; logout local imediato com barreira de restauração. Backend 46 testes PASS; frontend 22 testes PASS.
+- Execução 20: merge da PR #11 na `main` (`dd095a0`). Pós-merge e clone limpo públicos PASS. Contagem permanece 27 PASS, 1 PARTIAL (`FE-FIGMA`), 0 FAIL, 0 NOT_VERIFIED, 1 NOT_APPLICABLE. Submissão Rocketseat continua `NOT_SUBMITTED`.

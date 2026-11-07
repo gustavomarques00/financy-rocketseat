@@ -5,11 +5,12 @@ Este documento registra o estado da entrega. O repositório está público. A su
 ## Concluído
 
 - Implementação funcional: cadastro, login, logout, dashboard, CRUD de categorias e transações, isolamento por usuário.
-- Página de conta apresenta nome, e-mail e avatar para consulta, com logout. Não há botão de salvamento sem operação.
-- Testes de backend, frontend e Playwright no SQLite temporário.
-- Auditoria de segredos versionados e do advisory de desenvolvimento do Prisma.
+- Recuperação de senha, Lembrar-me com refresh HttpOnly, logout resiliente e Prisma 7.10.1 (PR #11 integrada na `main`).
+- Página de conta edita o nome via `updateMe`; e-mail somente leitura; logout presente.
+- Testes de backend (46), frontend (22) e Playwright (6) no SQLite temporário; clone limpo validado na Execução 20.
+- Advisory `GHSA-ggr8-5vv4-36mx` eliminado (`deepmerge-ts@8.0.2`); `npm audit --omit=dev` = 0 no backend.
 - Documentação de instalação, execução, testes, Figma e limitações no README.
-- Visibilidade pública de `gustavomarques00/financy-rocketseat`. Durante o desenvolvimento o repositório era privado.
+- Visibilidade pública de `gustavomarques00/financy-rocketseat`.
 
 ## Pendente
 
@@ -18,4 +19,4 @@ Este documento registra o estado da entrega. O repositório está público. A su
 ## Não declarar
 
 - O desafio não foi enviado nem aprovado.
-- A fidelidade visual não está completa (`FIGMA_PARTIAL`).
+- A fidelidade visual tipográfica não está completa (`FIGMA_PARTIAL`).

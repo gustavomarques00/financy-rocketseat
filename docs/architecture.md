@@ -237,34 +237,39 @@ Códigos de erro previstos em `extensions.code`:
 | Variável | App | Uso |
 |----------|-----|-----|
 | `JWT_SECRET` | backend | Assinatura JWT (obrigatória) |
-| `JWT_EXPIRES_IN` | backend | Expiração JWT (padrão `7d`) |
+| `JWT_EXPIRES_IN` | backend | Access token com Lembrar-me (padrão `15m`) |
+| `JWT_EXPIRES_IN_SESSION` | backend | Access token sem Lembrar-me (padrão `8h`) |
+| `REFRESH_TOKEN_TTL_DAYS` | backend | Validade do refresh cookie (padrão `30`) |
+| `TRUSTED_PROXIES` | backend | Allowlist de proxies para `X-Forwarded-For` (vazio = ignorar forwarded) |
 | `DATABASE_URL` | backend | Prisma/SQLite |
 | `PORT` | backend | Porta HTTP (padrão `4000`) |
 | `CORS_ORIGIN` | backend | Origem frontend |
-| `VITE_BACKEND_URL` | frontend | Endpoint GraphQL |
+| `FRONTEND_URL` | backend | Base dos links de reset de senha |
+| `MAIL_TRANSPORT` | backend | `file` \| `smtp` \| `memory` |
+| `VITE_BACKEND_URL` | frontend | Endpoint GraphQL (`/graphql` via proxy local) |
+| `VITE_DEV_PROXY_TARGET` | frontend | Destino do proxy Vite (`http://127.0.0.1:4000`) |
 
-`.env` não versionado. `.env.example` contém apenas as chaves obrigatórias do enunciado no backend (`JWT_SECRET`, `DATABASE_URL`).
+`.env` não versionado. Ver `backend/.env.example` e `frontend/.env.example` para o conjunto completo.
 
 ## Estratégia de testes
 
 | Nível | Cobertura atual |
 |-------|-----------------|
 | Smoke | `health` |
-| Integração GraphQL | Auth, CRUD, ownership, valores inválidos — SQLite temporário por suíte |
-| Frontend | Renderização da tela inicial (Etapa 1) |
-| Aceitação / E2E browser | Etapa 4 |
+| Integração GraphQL | Auth, CRUD, ownership, reset, refresh, rate limit — SQLite temporário |
+| Frontend | AuthContext, páginas, retry GraphQL, logout resiliente |
+| Aceitação / E2E browser | Playwright desktop e mobile |
 
 ## Dependências backend relevantes
 
 - `graphql-yoga`, `graphql`
-- `@prisma/client`, `prisma`
-- `bcryptjs`, `jose`
+- `@prisma/client`, `prisma`, `@prisma/adapter-better-sqlite3`, `better-sqlite3`
+- `bcryptjs`, `jose`, `nodemailer`
 - `zod`, `dotenv`
 - `vitest`
 
 ## Decisões conscientemente adiadas
 
-- Frontend funcional (Etapa 3)
-- Refresh tokens, OAuth, recuperação de senha, RBAC
-- Next.js, REST, serviços cloud
-- Deploy e repositório público
+- OAuth / RBAC / multi-instância com rate limit distribuído
+- Next.js, REST, serviços cloud pagos
+- Medição tipográfica Figma (`FIGMA_MEASUREMENT_BLOCKED`)
