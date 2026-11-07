@@ -39,7 +39,8 @@ export default defineConfig({
       timeout: 120_000,
       env: {
         ...process.env,
-        VITE_BACKEND_URL: `${backendOrigin}/graphql`,
+        VITE_BACKEND_URL: '/graphql',
+        VITE_DEV_PROXY_TARGET: backendOrigin,
       },
     },
   ],

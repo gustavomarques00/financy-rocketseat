@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
-import { PrismaClient } from '@prisma/client'
+import { createPrismaClient } from './lib/prisma.js'
 
 const backendRoot = fileURLToPath(new URL('..', import.meta.url))
 const require = createRequire(import.meta.url)
@@ -51,7 +51,7 @@ describe('category appearance migration', () => {
     const databaseUrl = `file:${join(directory, 'legacy.db').replace(/\\/g, '/')}`
     assertLocalTestDatabase(databaseUrl, directory)
 
-    runPrisma(['db', 'execute', '--file', initMigrationPath, '--url', databaseUrl], databaseUrl)
+    runPrisma(['db', 'execute', '--file', initMigrationPath], databaseUrl)
 
     const checksum = createHash('sha256').update(readFileSync(initMigrationPath)).digest('hex')
     const seedPath = join(directory, 'seed.sql')
@@ -78,10 +78,10 @@ INSERT INTO "Transaction" ("id", "description", "amount", "type", "date", "categ
 VALUES ('tx-legacy', 'Saldo antigo', 1500, 'INCOME', '2026-01-15T12:00:00.000Z', 'cat-legacy', 'user-legacy', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 `,
     )
-    runPrisma(['db', 'execute', '--file', seedPath, '--url', databaseUrl], databaseUrl)
+    runPrisma(['db', 'execute', '--file', seedPath], databaseUrl)
     runPrisma(['migrate', 'deploy'], databaseUrl)
 
-    const prisma = new PrismaClient({ datasources: { db: { url: databaseUrl } } })
+    const prisma = createPrismaClient(databaseUrl)
     try {
       const category = await prisma.category.findUniqueOrThrow({
         where: { id: 'cat-legacy' },
@@ -97,6 +97,9 @@ VALUES ('tx-legacy', 'Saldo antigo', 1500, 'INCOME', '2026-01-15T12:00:00.000Z',
       expect(category.transactions).toEqual([
         expect.objectContaining({ id: 'tx-legacy', amount: 1500, categoryId: 'cat-legacy' }),
       ])
+
+      const user = await prisma.user.findUniqueOrThrow({ where: { id: 'user-legacy' } })
+      expect(user.sessionVersion).toBe(0)
     } finally {
       await prisma.$disconnect()
     }

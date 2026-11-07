@@ -1,4 +1,4 @@
-import type { PrismaClient, User } from '@prisma/client'
+import type { PrismaClient, User } from '../lib/prisma.js'
 import { hashPassword, verifyPassword } from '../auth/password.js'
 import { signAccessToken } from '../auth/jwt.js'
 import type { Env } from '../env.js'
@@ -10,6 +10,7 @@ import {
   registerInputSchema,
   updateMeInputSchema,
 } from '../validation/inputs.js'
+import { issueRefreshSession } from './sessions.js'
 
 export type PublicUser = {
   id: string
@@ -32,6 +33,15 @@ function toPublicUser(user: User): PublicUser {
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   }
+}
+
+async function issueAccessToken(
+  env: Env,
+  user: Pick<User, 'id' | 'sessionVersion'>,
+  rememberMe: boolean,
+): Promise<string> {
+  const expiresIn = rememberMe ? env.JWT_EXPIRES_IN : env.JWT_EXPIRES_IN_SESSION
+  return signAccessToken(user.id, user.sessionVersion, env.JWT_SECRET, expiresIn)
 }
 
 export async function registerUser(
@@ -59,7 +69,12 @@ export async function registerUser(
     },
   })
 
-  const token = await signAccessToken(user.id, env.JWT_SECRET, env.JWT_EXPIRES_IN)
+  const rememberMe = parsed.data.rememberMe === true
+  if (rememberMe) {
+    await issueRefreshSession(prisma, env, user.id)
+  }
+
+  const token = await issueAccessToken(env, user, rememberMe)
   return { token, user: toPublicUser(user) }
 }
 
@@ -87,7 +102,12 @@ export async function loginUser(
     throw invalidCredentials
   }
 
-  const token = await signAccessToken(user.id, env.JWT_SECRET, env.JWT_EXPIRES_IN)
+  const rememberMe = parsed.data.rememberMe === true
+  if (rememberMe) {
+    await issueRefreshSession(prisma, env, user.id)
+  }
+
+  const token = await issueAccessToken(env, user, rememberMe)
   return { token, user: toPublicUser(user) }
 }
 

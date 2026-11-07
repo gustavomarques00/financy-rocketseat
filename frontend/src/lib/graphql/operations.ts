@@ -30,6 +30,22 @@ export const LOGIN_MUTATION = gql`
   }
 `
 
+export const REQUEST_PASSWORD_RESET_MUTATION = gql`
+  mutation RequestPasswordReset($email: String!) {
+    requestPasswordReset(email: $email) {
+      message
+    }
+  }
+`
+
+export const RESET_PASSWORD_MUTATION = gql`
+  mutation ResetPassword($token: String!, $newPassword: String!) {
+    resetPassword(token: $token, newPassword: $newPassword) {
+      message
+    }
+  }
+`
+
 export const UPDATE_ME_MUTATION = gql`
   mutation UpdateMe($input: UpdateMeInput!) {
     updateMe(input: $input) {

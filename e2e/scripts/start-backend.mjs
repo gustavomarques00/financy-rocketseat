@@ -19,9 +19,15 @@ const env = {
   ...process.env,
   JWT_SECRET: 'e2e-jwt-secret-min-16',
   JWT_EXPIRES_IN: '1h',
+  JWT_EXPIRES_IN_SESSION: '1h',
   DATABASE_URL: `file:${databasePath}`,
   PORT: '4100',
   CORS_ORIGIN: 'http://127.0.0.1:5174',
+  FRONTEND_URL: 'http://127.0.0.1:5174',
+  MAIL_TRANSPORT: 'file',
+  MAIL_DIR: join(tmpDir, 'mail'),
+  COOKIE_SECURE: 'false',
+  COOKIE_SAMESITE: 'Lax',
   NODE_ENV: 'test',
 }
 

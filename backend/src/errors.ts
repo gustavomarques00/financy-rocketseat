@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql'
-import { Prisma } from '@prisma/client'
+import { Prisma } from './lib/prisma.js'
 
 export class AppError extends Error {
   readonly code: string

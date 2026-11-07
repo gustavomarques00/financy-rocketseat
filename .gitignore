@@ -17,6 +17,8 @@ coverage/
 backend/prisma/*.db
 backend/prisma/*.db-journal
 backend/prisma/dev.db*
+backend/src/generated/
+backend/.mail/
 *.db
 *.db-journal
 

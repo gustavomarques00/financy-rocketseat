@@ -75,6 +75,11 @@
   font-size: 0.875rem;
 }
 
+.auth-back {
+  margin-top: 1rem;
+  display: inline-block;
+}
+
 .check-row {
   display: inline-flex;
   gap: 0.4rem;
