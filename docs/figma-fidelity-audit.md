@@ -39,12 +39,12 @@ Na página Projeto (`3:376`), a seção Gestão aparece à direita do Perfil com
 
 | Screen | Figma Node | Baseline | Differences | Severity | Resolution |
 |---|---|---|---|---|---|
-| Login | `3101:353` | Cartão genérico, fonte Plus Jakarta, título "Entrar" | Logo, título "Fazer login", subtítulo, divisor "ou", botão secundário "Criar conta", lembrar-me e recuperar senha | P1 | Layout e cópia alinhados. Lembrar-me não altera a sessão. Recuperar senha fica desabilitado: não há endpoint. |
+| Login | `3101:353` | Cartão genérico, fonte Plus Jakarta, título "Entrar" | Logo, título "Fazer login", subtítulo, divisor "ou", botão secundário "Criar conta", lembrar-me e recuperar senha | P1 | Layout e cópia alinhados. Lembrar-me controla refresh HttpOnly; recuperar senha usa `/forgot-password` e `/reset-password`. |
 | Cadastro | `3103:1915` | Título e campos sem a hierarquia do frame | Logo, "Criar conta", nome completo, aviso de 8 caracteres, divisor e "Fazer login" | P1 | Corrigido. A senha mínima de 8 caracteres já era a regra do backend. |
 | Dashboard | `3103:1987` | Barra lateral escura e três cards genéricos | Topo com logo, navegação central e avatar; cards Saldo total, Receitas do mês e Despesas do mês; colunas de recentes e categorias | P0 | Estrutura corrigida. Ícones ilustrativos dos cards e totais mensais filtrados por calendário não foram reproduzidos. Os totais continuam sendo o agregado real das transações do usuário. |
 | Transações | `3104:362` | Lista simples | Tabela com busca, tipo, categoria, badges Entrada/Saída e paginação | P1 | Busca, tipo, categoria e páginas de 10 itens são locais, sem novo contrato GraphQL. O seletor de período do frame não foi adicionado. |
 | Categorias | `3104:2028` | Lista simples | Título, três indicadores e cards | P1 | Cards e contagens reais. Descrição e ícone por categoria não existem no modelo e não foram inventados. |
-| Perfil | `3104:2925` | Página "Conta" com grade de metadados | Cartão central, avatar, nome, e-mail bloqueado, salvar e sair | P1 | O botão inoperante foi removido. Nome e e-mail são texto somente leitura, com aviso de consulta. Logout permanece. O frame oficial não foi relido nesta etapa por limite da API. |
+| Perfil | `3104:2925` | Página "Conta" com grade de metadados | Cartão central, avatar, nome, e-mail bloqueado, salvar e sair | P1 | Nome editável via `updateMe`; e-mail somente leitura. Logout permanece. O frame oficial não foi relido nesta etapa por limite da API. |
 | Modal categoria | Gestão, id não lido | Modal funcional com nome | Overlay e cartão | P2 | Mantido o campo Nome. Texto interno do frame não foi lido. |
 | Modal transação | Gestão, id não lido | Modal com os campos do CRUD | Overlay; o frame também sugere calendário | P2 | Campos do CRUD preservados. O calendário expandido do frame não foi inspecionado em detalhe. |
 
@@ -102,7 +102,7 @@ O usuário forneceu, em 6 nov 2026, sete capturas locais além do Style Guide j�
 
 | Item | Figma Evidence | Current UI | Difference | Severity | Action | Verification |
 |---|---|---|---|---|---|---|
-| Login e cadastro | Cartão branco, FINANCY, campos com ícone, lembrar-me, recuperar senha, divisor e botão outline | Mesma hierarquia | A captura de cadastro diz “mínimo 6 caracteres” | P2 | A regra real de 8 caracteres foi mantida. Recuperar senha continua desabilitado | PARTIAL |
+| Login e cadastro | Cartão branco, FINANCY, campos com ícone, lembrar-me, recuperar senha, divisor e botão outline | Mesma hierarquia | A captura de cadastro diz “mínimo 6 caracteres” | P2 | A regra real de 8 caracteres foi mantida. Recuperar senha e Lembrar-me estão funcionais | PARTIAL |
 | Dashboard | Três cartões, recentes, categorias e “Nova transação” | Valores do GraphQL | Totais “do mês” continuam o agregado de todas as transações | P1 | Ícones de seta circular, links “Ver todas” e “Gerenciar”, e o modal aberto na própria dashboard | PARTIAL |
 | Transações | Filtros, colunas, Entrada/Saída, ações e paginação | Lista local | Faltavam cabeçalhos e o intervalo de resultados com página anterior/próxima | P1 | Cabeçalhos, intervalo, página ativa e setas desabilitadas nas extremidades | PARTIAL |
 | Categorias | Três indicadores e grade de cartões com descrição | Contagens reais | Descrição não existe no modelo | P1 | Indicadores e cartão com ícone, ações, nome, tag e quantidade. Descrição não foi inventada | PARTIAL |
